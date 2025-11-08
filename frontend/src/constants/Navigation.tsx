@@ -1,6 +1,7 @@
 import Weather from "../pages/Weather";
 import Counter from "../pages/Counter";
 import HomePage from "../pages/Home";
+import LoginPage from "../pages/Login";
 
 /**
  * TODO: Modify this constant to point to the URL of your backend.
@@ -15,12 +16,18 @@ import HomePage from "../pages/Home";
  * you can find the name by running `flyctl status`, under App > Name.
  */
 export const BACKEND_BASE_PATH = 'https://fa23-lec9-demo-soln.fly.dev/api';
+// export const BACKEND_BASE_PATH = 'https://cornell_geoguesser.fly.dev/api';
 
 export const PATHS: {
     link: string;
     label: string;
     element?: JSX.Element;
 }[] = [
+    {
+        link: "/login",
+        label: "Login",
+        element: <LoginPage />,
+    },
     {
         link: "/",
         label: "Home",
