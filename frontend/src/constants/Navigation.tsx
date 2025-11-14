@@ -24,12 +24,12 @@ export const PATHS: {
     element?: JSX.Element;
 }[] = [
     {
-        link: "/login",
+        link: "/",
         label: "Login",
         element: <LoginPage />,
     },
     {
-        link: "/",
+        link: "/home",
         label: "Home",
         element: <HomePage />,
     },

@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 
 const RootLayout = () => (
     <div>
-        <HeaderSimple links={PATHS} />
+        {/* <HeaderSimple links={PATHS} /> */}
         <div>
             <Outlet />
         </div>
