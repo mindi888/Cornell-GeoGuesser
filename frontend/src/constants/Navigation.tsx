@@ -2,6 +2,8 @@ import Weather from "../pages/Weather";
 import Counter from "../pages/Counter";
 import HomePage from "../pages/Home";
 import LoginPage from "../pages/Login";
+import PlayPage from "../pages/Play";
+import ProfilePage from "../pages/Profile";
 
 /**
  * TODO: Modify this constant to point to the URL of your backend.
@@ -32,6 +34,16 @@ export const PATHS: {
         link: "/home",
         label: "Home",
         element: <HomePage />,
+    },
+    {
+        link: "/profile",
+        label: "Profile",
+        element: <ProfilePage />,
+    },
+    {
+        link: "/play",
+        label: "Play",
+        element: <PlayPage />,
     },
     {
         link: "/weather",

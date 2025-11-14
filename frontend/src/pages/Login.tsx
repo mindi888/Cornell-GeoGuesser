@@ -9,15 +9,15 @@ const LoginPage = () => {
     const navigate = useNavigate();
 
     const handleLoginClick = async () => {
-    if(isLoggedIn){
-      await signOut();
-    }
-    else{
-      await signIn();
-    }
-    setIsLoggedIn(!isLoggedIn);
-    navigate("/home");
-  };
+        if(isLoggedIn){
+        await signOut();
+        }
+        else{
+        await signIn();
+        }
+        setIsLoggedIn(!isLoggedIn);
+        navigate("/home");
+    };
   
   return(
     <div
