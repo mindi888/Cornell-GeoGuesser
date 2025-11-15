@@ -19,21 +19,59 @@ const LoginPage = () => {
         navigate("/home");
     };
   
-  return(
+  return (
     <div
-        // style={{
-        // width: "90vw",
-        // display: "flex",
-        // justifyContent: "flex-end",
-        // gap: "12px",}}
+      style={{
+        height: "100vh",
+        width: "100vw",
+        backgroundImage: `url("/cornell_cover.jpg")`,  
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        color: "white",
+        textShadow: "0 0 10px rgba(0, 0, 0, 0.8)"
+      }}
     >
-    <center>
-    <h1>Login!</h1>
-        {isLoggedIn && user && <p>Hello, {user.displayName}</p>}
-        <button onClick={handleLoginClick}>
+    <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.45)", // overlay
+          zIndex: 0,      //behind the context
+        }}
+    />
+    <div
+        style={{
+          position: "relative",
+          zIndex: 1,      // in front of image and overlay
+          textAlign: "center",
+          color: "white",
+          textShadow: "0 0 12px rgba(0,0,0,0.9)" 
+        }}
+    >
+
+      <h1 style={{ fontSize: "5rem", marginBottom: "20px" }}>
+        Cornell GeoGuesser
+      </h1>
+
+        <button
+            onClick={handleLoginClick}
+            style={{
+              padding: "12px 24px",
+              fontSize: "1.2rem",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              color: "white",
+              backgroundColor: "rgba(82, 48, 18, 0.91)"
+            }}
+        >
             {isLoggedIn ? "Sign Out" : "Log In"}
         </button>
-    </center>
+      </div>
     </div>
     )
     
