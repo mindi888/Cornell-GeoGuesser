@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import InteractiveMap from "../components/Map";
 import type { LatLngExpression } from "leaflet";
-import 'leaflet/dist/leaflet.css';
 
 const PlayPage = () => {
     const navigate = useNavigate();
@@ -18,7 +17,7 @@ const PlayPage = () => {
             alert("Place a pin on the map first!");
             return;
         }
-        navigate("/results");
+        navigate("/results", { state: { guess: markerPosition } });
     };
 
     return (
