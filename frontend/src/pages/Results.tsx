@@ -17,6 +17,21 @@ const ResultsPage = () => {
 
     const distMeters = L.latLng(guess).distanceTo(L.latLng(correctLocation));
 
+    fetch("/backend/api/users/update-score", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ score: distMeters }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        console.log("Score updated successfully:", data);
+    })
+    .catch((error) => {
+        console.error("Error updating score:", error);
+    });
+
     const handlePlayClick = async () => {
         navigate("/play");
     };

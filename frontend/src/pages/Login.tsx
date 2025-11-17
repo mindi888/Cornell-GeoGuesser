@@ -13,10 +13,13 @@ const LoginPage = () => {
         await signOut();
         }
         else{
-        await signIn();
+        const output = await signIn();
+          if (output) {
+            setIsLoggedIn(!isLoggedIn);
+            navigate("/home");
+          }
         }
-        setIsLoggedIn(!isLoggedIn);
-        navigate("/home");
+        
     };
   
   return (
