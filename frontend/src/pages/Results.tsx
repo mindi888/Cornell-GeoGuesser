@@ -28,6 +28,19 @@ const ResultsPage = () => {
         shadowAnchor: [20, 50],        // optional
     });
 
+    const getScore = (dist: number) => {
+        if (dist > 3000) {
+            return 0;
+        }
+        const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
+        for (let i: number = 1; i < scoreCutOffs.length; i++) {
+            if (dist > scoreCutOffs[i]) {
+                return (10*(dist - scoreCutOffs[i])/(scoreCutOffs[i]-scoreCutOffs[i-1]) + 10*(i)).toFixed(2);
+            }
+        }
+        return -10000;
+    }
+
     // Update user score
     fetch("/backend/api/users/update-score", {
         method: "PUT",
@@ -73,7 +86,7 @@ const ResultsPage = () => {
                 
 
             <p>Your distance from goal: {distMeters.toFixed(2)} meters</p>
-            <p>Points Earned: {/*some points calc func*/} </p>
+            <p>Points Earned: {getScore(distMeters)} </p>
             <p>Total Points: {/*access user total points*/} </p>
 
             <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
