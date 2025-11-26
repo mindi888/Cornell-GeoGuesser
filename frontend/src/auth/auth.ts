@@ -3,26 +3,76 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const provider = new GoogleAuthProvider();
 
+interface BackendUserResponse {
+    message: string;
+    uid: string;
+    userData: { name: string; email: string; score: number };
+}
+
 export const signIn = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential?.accessToken;
-    const user = result.user;
+    try {
+        const result = await signInWithPopup(auth, provider);
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential?.accessToken; // This is the access token for Google APIs, not the ID token for your backend
 
-    return { token, user };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    const code = err.code;
-    const message = err.message;
-    const email = err.customData.email;
+        const user = result.user;
+        
+        // --- NEW STEP: Call your secure backend endpoint ---
+        const idToken = await user.getIdToken(); // Get the Firebase ID token
+        
+        // Define your backend endpoint URL
+        const backendUrl = 'http://localhost:8080/api/secure-login-action'; 
 
-    console.log(
-      `An error ${code} occurred when logging user with email: ${email} with message: ${message}`
-    );
-    return null;
-  }
+        const backendResponse = await fetch(backendUrl, {
+            method: 'POST',
+            headers: {
+                // Pass the ID token securely in the Authorization header
+                'Authorization': `Bearer ${idToken}`, 
+                'Content-Type': 'application/json'
+            },
+            // Optionally, pass other data if your backend expects it
+            body: JSON.stringify({ email: user.email, name: user.displayName }) 
+        });
+
+        if (!backendResponse.ok) {
+            throw new Error(`Backend authentication failed: ${backendResponse.statusText}`);
+        }
+
+        const backendData: BackendUserResponse = await backendResponse.json();
+        console.log("Backend successfully processed login:", backendData.message);
+        // --- END NEW STEP ---
+
+        // You can now return the user object and the backend data if needed
+        return { user, backendData };
+        
+    } catch (err: any) {
+        // ... (existing error handling code) ...
+        console.log(`An error ${err.code} occurred... message: ${err.message}`);
+        return null;
+    }
 };
+
+
+// export const signIn = async () => {
+//   try {
+//     const result = await signInWithPopup(auth, provider);
+//     const credential = GoogleAuthProvider.credentialFromResult(result);
+//     const token = credential?.accessToken;
+//     const user = result.user;
+
+//     return { token, user };
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   } catch (err: any) {
+//     const code = err.code;
+//     const message = err.message;
+//     const email = err.customData.email;
+
+//     console.log(
+//       `An error ${code} occurred when logging user with email: ${email} with message: ${message}`
+//     );
+//     return null;
+//   }
+// };
 
 export const signOut = async () => {
   await auth.signOut();
