@@ -4,21 +4,25 @@ import * as admin from 'firebase-admin';
 
 import { initializeApp, applicationDefault, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import { getAuth } from "firebase/auth";
 
-const serviceAccount: admin.ServiceAccount = {
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  // The private key must be specifically parsed to interpret the \n as a real newline
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-};
+// const serviceAccount: admin.ServiceAccount = {
+//   projectId: process.env.PROJECT_ID,
+//   clientEmail: process.env.CLIENT_EMAIL,
+//   // The private key must be specifically parsed to interpret the \n as a real newline
+//   privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n').trim()
+// };
+// const app = initializeApp({
+//   credential: cert(serviceAccount),
+// });
+import serviceAccount from "./service_account.json";
+
 const app = initializeApp({
-  credential: cert(serviceAccount),
+  credential: cert(serviceAccount as admin.ServiceAccount),
 });
 const db = getFirestore();
 
 export { db };
-export const auth = getAuth();
+export const auth = admin.auth();
 
 // import { initializeApp } from "firebase/app";
 // import { getFirestore } from "firebase/firestore";

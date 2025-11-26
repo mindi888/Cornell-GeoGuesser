@@ -5,7 +5,9 @@
         "strict": true,
         "declaration": true,
         "outDir": "./dist",
-        "esModuleInterop": true
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "resolveJsonModule": true
     },
     "include": ["*.ts"]
 }
