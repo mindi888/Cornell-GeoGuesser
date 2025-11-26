@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css";
 const pinIcon: Icon<IconOptions> = L.icon({
   iconUrl: "/Bear-icon.png", // replace with your marker image
   iconSize: [38, 38],
-  iconAnchor: [12, 41],
+  iconAnchor: [19, 19],
 });
 
 interface MapProps {
