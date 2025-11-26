@@ -2,25 +2,55 @@ import { useState } from "react";
 import { signIn, signOut } from "../auth/auth";
 import { useAuth } from "../auth/AuthUserProvider";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
 
 const LoginPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const {user} = useAuth();
     const navigate = useNavigate();
 
-    const handleLoginClick = async () => {
-        if(isLoggedIn){
-        await signOut();
-        }
-        else{
-        const output = await signIn();
-          if (output) {
-            setIsLoggedIn(!isLoggedIn);
-            navigate("/home");
-          }
-        }
+    // const handleLoginClick = async () => {
+    //     if(isLoggedIn){
+    //       await signOut();
+    //     }
+    //     else{
+    //       const output = await signIn();
+    //         if (output) {
+    //           setIsLoggedIn(!isLoggedIn);
+    //           navigate("/home");
+    //         }
+    //     }
         
-    };
+    // };
+
+    const handleLoginClick = async () => {
+  if (isLoggedIn) {
+    await signOut();
+  } else {
+    const output = await signIn();  // does not return anything, but updates auth state
+
+    if (output) {
+      setIsLoggedIn(!isLoggedIn);
+      navigate("/home");
+    
+
+      const user = auth.currentUser;  // <-- Firebase user now available
+
+      if (user) {
+        setIsLoggedIn(true);
+        navigate("/home");
+        await fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: user.displayName,
+            email: user.email,
+          }),
+        });
+      }
+    }
+  }
+};
   
   return (
     <div

@@ -3,6 +3,7 @@ import express, { Express } from "express";
 import cors from "cors";
 import { WeatherResponse } from "@full-stack/types";
 import fetch from "node-fetch";
+import { db, collection, addDoc } from "./firebase";
 
 const app: Express = express();
 
@@ -11,6 +12,7 @@ const port = 8080;
 
 app.use(cors());
 app.use(express.json());
+
 
 // type WeatherData = {
 //     latitude: number;
@@ -42,7 +44,7 @@ app.use(express.json());
 // });
 
 // Users stored in memory (starts empty)
-const users: { id: number; username: string }[] = [];
+const users: { id: number; email: string; username: string; avg_score: number; high_score: number; total_plays: number}[] = [];
 
 /* --- GET /users (list all logged-in users) --- */
 app.get("/users", (req, res) => {
@@ -51,33 +53,60 @@ app.get("/users", (req, res) => {
 });
 
 /* --- POST /users (user logs in -> add to array) --- */
-app.post("/users", (req, res) => {
-    const { username } = req.body;
+// app.post("/users", (req, res) => {
+//     const { username, email } = req.body;
 
-    console.log("POST /users called with:", username);
 
-    // Optional: check if user already exists
-    const existingUser = users.find((u) => u.username === username);
-    if (existingUser) {
-        return res.json({
-            message: "User already logged in",
-            user: existingUser
-        });
-    }
 
-    // Create new user entry
-    const newUser = {
-        id: users.length + 1,
-        username
-    };
+//     console.log("POST /users called with:", username);
 
-    users.push(newUser);
+//     // Optional: check if user already exists
+//     const existingUser = users.find((u) => u.email === email);
+//     if (existingUser) {
+//         return res.json({
+//             message: "User already logged in",
+//             user: existingUser
+//         });
+//     }
 
-    res.json({
-        message: "User logged in",
-        user: newUser
+//     // Create new user entry
+//     const newUser = {
+//         id: users.length + 1,
+//         email: email,
+//         username: username,
+//         avg_score: 0,
+//         high_score: 0,
+//         total_plays: 0
+//     };
+
+//     users.push(newUser);
+
+//     res.json({
+//         message: "User logged in",
+//         user: newUser
+//     });
+// });
+
+app.post("/users", async (req, res) => {
+  const { username, email, highScore, averageScore, totalPlays } = req.body;
+
+  try {
+    const usersRef = collection(db, "users"); // reference to users collection
+    const docRef = await addDoc(usersRef, {
+      username,
+      email,
+      highScore,
+      averageScore,
+      totalPlays
     });
+    res.status(200).json({ message: "User added", id: docRef.id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error adding user" });
+  }
+  app.use(cors({ origin: "http://localhost:5173" }));
 });
+
 
 /* --- PUT /users/:id (update user info) --- */
 app.put("/users/:id", (req, res) => {
