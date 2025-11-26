@@ -35,7 +35,7 @@ const ResultsPage = () => {
         const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
         for (let i: number = 1; i < scoreCutOffs.length; i++) {
             if (dist > scoreCutOffs[i]) {
-                return (10 - (dist - scoreCutOffs[i])*10/(scoreCutOffs[i]-scoreCutOffs[i-1]) + 10*(i-1)).toFixed(2)
+                return (10*(dist - scoreCutOffs[i])/(scoreCutOffs[i]-scoreCutOffs[i-1]) + 10*(i)).toFixed(2);
             }
         }
         return -10000;
