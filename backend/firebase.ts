@@ -1,9 +1,26 @@
-require('dotenv').config({ path: '../.env' }); // <-- Load the .env file from the root directory
+require('dotenv').config({ path: '../.env' }); 
 
-import * as admin from 'firebase-admin';
-
-import { initializeApp, applicationDefault, cert } from 'firebase-admin/app';
+import admin from 'firebase-admin';
+import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+
+// 2. Define the serviceAccount object using process.env variables
+const serviceAccount: admin.ServiceAccount = {
+  projectId: process.env.PROJECT_ID,
+  clientEmail: process.env.CLIENT_EMAIL,
+  // The private key needs to specifically interpret the literal `\n` characters 
+  // in your .env string as actual newlines.
+  privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n').trim(),
+};
+
+
+const app = initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+const db = getFirestore();
+
+export { db };
+export const auth = admin.auth();
 
 // const serviceAccount: admin.ServiceAccount = {
 //   projectId: process.env.PROJECT_ID,
@@ -14,15 +31,6 @@ import { getFirestore } from 'firebase-admin/firestore';
 // const app = initializeApp({
 //   credential: cert(serviceAccount),
 // });
-import serviceAccount from "./service_account.json";
-
-const app = initializeApp({
-  credential: cert(serviceAccount as admin.ServiceAccount),
-});
-const db = getFirestore();
-
-export { db };
-export const auth = admin.auth();
 
 // import { initializeApp } from "firebase/app";
 // import { getFirestore } from "firebase/firestore";

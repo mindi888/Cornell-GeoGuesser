@@ -44,7 +44,16 @@ app.get("/users", async (req, res) => {
 /* --- POST /api/secure-login-action --- */
 app.post("/api/secure-login-action", async (req, res) => {
     // 1. Get the ID token sent from the frontend client
+    console.log('Checking Firebase DB object:', db ? 'Initialized' : 'Not Initialized');
+    console.log('Checking Firebase Auth object:', auth ? 'Initialized' : 'Not Initialized');
+
+    // If you want to see if they have core functions
+    console.log('DB can access collection function:', typeof db.collection);
+    console.log('Auth can access verifyIdToken function:', typeof auth.verifyIdToken);
+    
+
     const idToken = req.headers.authorization?.split('Bearer ')[1];
+
 
     if (!idToken) {
         return res.status(401).send("Unauthorized");
@@ -75,6 +84,7 @@ app.post("/api/secure-login-action", async (req, res) => {
     } catch (error) {
         // Token was invalid, expired, or something went wrong with auth
         res.status(401).send("Unauthorized: Invalid token");
+        console.error('Error during login process:', error)
     }
 });
 
