@@ -32,36 +32,13 @@ const ResultsPage = () => {
         if (dist > 3000) {
             return 0;
         }
-        else if (dist > 2000) {
-            return (10 - (dist - 2000)/100).toFixed(2);
+        const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
+        for (let i: number = 1; i < scoreCutOffs.length; i++) {
+            if (dist > scoreCutOffs[i]) {
+                return (10 - (dist - scoreCutOffs[i])*10/(scoreCutOffs[i]-scoreCutOffs[i-1]) + 10*(i-1)).toFixed(2)
+            }
         }
-        else if (dist > 1200) {
-            return (10 - (dist-1200)/80 + 10).toFixed(2) ;
-        }
-        else if (dist > 700) {
-            return (10 - (dist-700)/50  + 20).toFixed(2);
-        }
-        else if (dist > 350) {
-            return (10 - (dist-350)/35 + 30).toFixed(2);
-        }
-        else if (dist > 200) {
-            return (10 - (dist-200)/15 + 40).toFixed(2);
-        }
-        else if (dist > 100) {
-            return (10 - (dist-100)/10 + 50).toFixed(2);
-        }
-        else if (dist > 50) {
-            return (10 - (dist-50)/5 + 60).toFixed(2);
-        }
-        else if (dist > 25) {
-            return (10 - (dist-25)/2.5 + 70).toFixed(2);
-        }
-        else if (dist > 10) {
-            return (10 - (dist - 10)/1.5 + 80).toFixed(2);
-        }
-        else {
-            return (10 - dist+90).toFixed(2);
-        }
+        return -10000;
     }
 
     // Update user score
