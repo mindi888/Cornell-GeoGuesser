@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import { useUser } from "../UserContext";
 import { getAuth } from "firebase/auth";
+import homeButton from "../assets/homebutton.png";
 
 interface ResultsState {
     guess: LatLngExpression;
@@ -108,11 +109,11 @@ useEffect(() => {
         />
 
         <Marker position={correctLocation}>
-          <Popup>Correct Location</Popup>
+          <Popup>Beebe</Popup>
         </Marker>
 
         <Marker position={guess} icon={customMarker}>
-          <Popup>Your Guess</Popup>
+          <Popup>You</Popup>
         </Marker>
 
         <Polyline
@@ -134,9 +135,14 @@ useEffect(() => {
         }}>Total Points: {user?.score}</p>
 
       <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-        <button style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}}
-        onClick={handlePlayClick}>Play Again</button>
-        <button style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}} onClick={handleHomeClick}>Home</button>
+        <button 
+          style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}}
+          onClick={handlePlayClick}>Play Again</button>
+        <button 
+          style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}} 
+          onClick={handleHomeClick}>
+          <img src={homeButton} alt="Home" style={{ width: "30px", filter: "invert(1)" }}/>
+        </button>
       </div>
     </div>
   );
