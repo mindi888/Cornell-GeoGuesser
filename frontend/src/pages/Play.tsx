@@ -4,33 +4,39 @@ import InteractiveMap from "../components/Map";
 import type { LatLngExpression } from "leaflet";
 import { useUser } from "../UserContext";
 
-
 const PlayPage = () => {
     const navigate = useNavigate();
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [imageFileName, setImageFileName] = useState<string | null>(null);
     const [correctLocation, setCorrectLocation] = useState<LatLngExpression | null>(null);
-    const{user, addPoints} = useUser();
+    const { user } = useUser();
     const hasInitialized = useRef(false);
 
+    // REF + HEIGHT STATE
+    const mapContainerRef = useRef<HTMLDivElement | null>(null);
+    const [mapHeight, setMapHeight] = useState<number | null>(null);
+
+    // Load available image paths
     const images = Object.fromEntries(
         Array.from({ length: 48 }, (_, i) => [
             i + 1,
             new URL(`../assets/Locations/img${i + 1}.JPG`, import.meta.url).href
         ])
-        );
+    );
 
-    // Log marker position changes for debugging
+    // Main initialization effect
     useEffect(() => {
-        if (hasInitialized.current) return; // block second React dev run
+        if (hasInitialized.current) return;
         hasInitialized.current = true;
-        console.log("entered useeffect");
-        if(!user){
-            console.log("entered if statement");
+
+        if (!user) {
             navigate("/");
+            return;
         }
+
         const random = Math.floor(Math.random() * 48) + 1;
         setImageFileName(images[random]);
+
         fetch(`http://localhost:8080/locations/img${random}.JPG`)
             .then(res => res.json())
             .then(data => {
@@ -39,62 +45,89 @@ const PlayPage = () => {
             .catch(err => console.error(err));
     }, []);
 
+    // Measure & sync map height
     useEffect(() => {
-        console.log("Marker position set to:", markerPosition);
-        console.log("Current Location at:", correctLocation);
-        console.log("Current Location at:", imageFileName);
-    }, [markerPosition]);
+        const updateHeight = () => {
+            if (mapContainerRef.current) {
+                setMapHeight(mapContainerRef.current.offsetHeight);
+            }
+        };
 
+        updateHeight(); // initial measurement
+        window.addEventListener("resize", updateHeight);
 
-    const handleGuessClick = async () => {
+        return () => window.removeEventListener("resize", updateHeight);
+    }, []);
+
+    const handleGuessClick = () => {
         if (!markerPosition) {
             alert("Place a pin on the map first!");
             return;
         }
-        // navigate("/results", { state: { guess: markerPosition } });
-        navigate("/results", { 
-            state: { 
-                guess: markerPosition,
-                correctLocation: correctLocation // Pass as LatLngExpression
-            } 
-        });
 
+        navigate("/results", {
+            state: {
+                guess: markerPosition,
+                correctLocation
+            }
+        });
     };
 
-    return (         
-        <div style={{ textAlign: "center", padding: "24px"}}>
+    return (
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",  
+            justifyContent: "center",
+            minHeight: "100vh",
+            width: "100vw",   
+            padding: "24px",
+            boxSizing: "border-box"
+        }}>
             <h1>Can you guess where in Cornell this image is located?</h1>
-            <p>Click on the map to place your marker, then click "Guess" to submit. </p>
-            <div style={{ 
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "24px",
-                marginTop: "24px",
-                minHeight: "1000px"
-            }}>
-            <div style={{ flex: 1}}>
-            <InteractiveMap
-                markerPosition={markerPosition}
-                setMarkerPosition={setMarkerPosition}
-            />
-            </div>
+            <p>Click on the map to place your marker, then click "Guess" to submit.</p>
 
-            {/* RIGHT: IMAGE */}
-            <div style={{ flex: 1}}>
-                {imageFileName ? (
-                    <img src={imageFileName} 
-                    alt="Location" style={{ width: "100%", objectFit: "cover"}}/>
-                ) : (
-                    <p>Loading location...</p>
-                )}
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "space-evenly",
+                    alignItems: "center",
+                    gap: "50px",
+                    marginTop: "24px",
+                    flexDirection: "row",
+                    width: "100%", 
+                    maxWidth: "1600px" 
+                }}
+            >
+                {/* LEFT: MAP */}
+                <div style={{ flex: 1}} ref={mapContainerRef}>
+                    <InteractiveMap
+                        markerPosition={markerPosition}
+                        setMarkerPosition={setMarkerPosition}
+                    />
+                </div>
+
+                {/* RIGHT: IMAGE */}
+                <div style={{ flex: 1}}>
+                    {imageFileName ? (
+                        <img
+                            src={imageFileName}
+                            alt="Location"
+                            style={{
+                                width: "100%",
+                                height: mapHeight ?? "auto",
+                                objectFit: "cover"
+                            }}
+                        />
+                    ) : (
+                        <p>Loading location...</p>
+                    )}
                 </div>
             </div>
 
             <button
                 style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem" }}
                 onClick={handleGuessClick}
-                // disabled={!correctCoords} // Disable until coords are loaded
             >
                 Guess
             </button>
