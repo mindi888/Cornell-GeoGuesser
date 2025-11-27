@@ -6,6 +6,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet"
 
 interface ResultsState {
     guess: LatLngExpression;
+    correctLocation: LatLngExpression;
 }
 
 const ResultsPage = () => {
@@ -15,7 +16,8 @@ const ResultsPage = () => {
     const guess = state.guess;
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
 
-    const correctLocation: LatLngExpression = [42.4470, -76.4832]; // Cornell coords
+    // const correctLocation: LatLngExpression = [42.4470, -76.4832]; // Cornell coords
+    const correctLocation = state.correctLocation;
     const distMeters = L.latLng(guess).distanceTo(L.latLng(correctLocation));
 
     const customMarker = new L.Icon({
