@@ -6,7 +6,7 @@ const provider = new GoogleAuthProvider();
 interface BackendUserResponse {
     message: string;
     uid: string;
-    userData: { name: string; email: string; score: number };
+    userData: { name: string; email: string; score: number; pfp: string };
 }
 
 onAuthStateChanged(auth, (user) => {
@@ -51,6 +51,14 @@ export const signIn = async () => {
         const backendData: BackendUserResponse = await backendResponse.json();
         console.log("Backend successfully processed login:", backendData.message);
         // --- END NEW STEP ---
+
+        //already have this in login!!
+        // if (User) {
+        //     console.log("went into updating userContext if statement");
+        //     const res = await fetch(`http://localhost:8080/users/${User.uid}`);
+        //     const data = await res.json();
+        //     setUser(data.user); // store in your UserContext
+        // }
 
         // You can now return the user object and the backend data if needed
         return { user, backendData };

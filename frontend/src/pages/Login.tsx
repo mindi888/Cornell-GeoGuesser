@@ -3,10 +3,11 @@ import { signIn, signOut } from "../auth/auth";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../UserContext";
 import { getAuth } from "firebase/auth";
+import pfp1 from "../assets/pfp/pfp1.png";
 
 const LoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { user, setUser } = useUser(); // User context
+  const { user, setUser, changePfp } = useUser(); // User context
   const navigate = useNavigate();
 
   const handleLoginClick = async () => {
@@ -31,6 +32,13 @@ const LoginPage = () => {
         const res = await fetch(`http://localhost:8080/users/${curUser.uid}`);
         const data = await res.json();
         setUser(data.user); // store in your UserContext
+        //console.log("userContext data set");
+        if(user){
+          if(user.pfp==null){
+            //console.log("entered no pfp in statement");
+            changePfp(pfp1);
+          }
+        }
       }
 
       setIsLoggedIn(true);
