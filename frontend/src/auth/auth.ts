@@ -1,5 +1,5 @@
 import { auth } from "../firebase";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, getAuth, onAuthStateChanged } from "firebase/auth";
 
 const provider = new GoogleAuthProvider();
 
@@ -8,6 +8,16 @@ interface BackendUserResponse {
     uid: string;
     userData: { name: string; email: string; score: number };
 }
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, restore their info
+    console.log("User still signed in:", user.uid);
+  } else {
+    // User is signed out
+    console.log("No user signed in");
+  }
+});
 
 export const signIn = async () => {
     try {
