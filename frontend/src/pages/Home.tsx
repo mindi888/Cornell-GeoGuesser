@@ -11,7 +11,7 @@ const HomePage = () => {
         if(!user){
             navigate("/");
         }
-    });
+    },[]);
 
     const handlePlayClick = async () => {
         navigate("/play");

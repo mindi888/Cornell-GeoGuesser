@@ -11,7 +11,7 @@ const ProfilePage = () => {
         if(!user){
             navigate("/");
         }
-    });
+    },[]);
 
     const handleHomeClick = async () => {
         navigate("/home");
