@@ -72,18 +72,27 @@ const HomePage = () => {
         }}
         >
         {/*Leader Board*/}
-        <center>
-        <hr style={{ margin: "30px auto", width: "80%" }} />
+        <div
+            style={{
+                position: "absolute", // or "fixed" if you want it pinned
+                top: "240px",         // distance from top of page
+                right: "15%",          // horizontal center
+                transform: "translateX(-50%)", // perfect centering
+                width: "60%",      // optional: fill parent
+            }}
+            >
 
             {/* Leaderboard Section */}
-            <h2>Global Leaderboard</h2>
+            <h2 style={{ marginTop: "40px", marginLeft: "180px" }}>
+            Global Leaderboard
+            </h2>
             
             {isLoading && <p>Loading rankings...</p>}
             {error && <p style={{ color: 'red' }}>Error: {error}</p>}
             
             {!isLoading && !error && leaderboard.length > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <table style={{ borderCollapse: 'collapse', width: '60%', maxWidth: '600px', margin: '20px 0' }}>
+                    <table style={{ borderCollapse: 'collapse', width: '60%', maxWidth: '600px', margin: '0px 0' }}>
                         <thead>
                             <tr style={{ borderBottom: '2px solid #333' }}>
                                 <th style={tableHeaderStyle}>Rank</th>
@@ -113,12 +122,13 @@ const HomePage = () => {
             {!isLoading && !error && leaderboard.length === 0 && (
                 <p>No users found yet. Be the first to play!</p>
             )}
-    </center>
+        </div>
+
         {/* Map Image */}
         <div
           style={{
             position: "fixed",
-            top: "280px",
+            top: "290px",
             left: "74%",
             transform: "translateX(-50%)",
         }}
