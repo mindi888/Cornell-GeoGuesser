@@ -85,7 +85,7 @@ if (!curUser) {
   };
 
   return (
-    <div style={{ position: "relative", height: "100vh", width: "100vw", padding: "40px" }}>
+    <div style={{ position: "relative", height: "100vh", width: "100vw", padding: "40px", backgroundColor: "rgba(226, 206, 171, 1)" }}>
       {/* Home Button (Top Right) */}
       <button
         onClick={handleHomeClick}
@@ -98,9 +98,10 @@ if (!curUser) {
           padding: "10px",
           cursor: "pointer",
           zIndex: 10,
+          backgroundColor: "rgba(82, 48, 18, 0.8)"
         }}
       >
-        <img src={homeButton} alt="Home" style={{ width: "60px" }} />
+        <img src={homeButton} alt="Home" style={{ width: "60px", filter: "invert(1)" }} />
       </button>
 
       {/* Main Content: Two Columns */}
@@ -111,7 +112,7 @@ if (!curUser) {
           <img
             src={user?.pfp}
             alt="Profile"
-            style={{ width: "200px", height: "200px"}}
+            style={{ width: "250px", height: "250px", borderRadius: "50%", border: "7px solid rgba(82, 48, 18, 0.8)"}}
           />
 
           {/* Scrollable Button Gallery */}
@@ -134,7 +135,7 @@ if (!curUser) {
                   height: "120px",
                   borderRadius: "15px",
                   border: "1px solid #5b5b5bff",
-                  backgroundColor: selectedIndex === index ? "#d3d3d3" : "#fffefeff",
+                  backgroundColor: selectedIndex === index ? "rgba(47, 27, 10, 0.8)" : "rgba(82, 48, 18, 0.8)",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
