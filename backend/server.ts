@@ -18,6 +18,7 @@ interface UserData {
     name: string;
     email: string;
     score: number;
+    pfp: string;
     // Add other fields you might need, like lastLogin or createdAt
 }
 
@@ -104,7 +105,7 @@ app.post("/api/secure-login-action", async (req, res) => {
 app.put("/users/:id", async (req, res) => {
     const { id } = req.params;
     // We can update name, email, or score
-    const { name, email, score } = req.body; 
+    const { name, email, score, pfp } = req.body; 
 
     console.log("PUT /users/" + id + " called");
 
@@ -113,6 +114,7 @@ app.put("/users/:id", async (req, res) => {
     if (name !== undefined) updates.name = name;
     if (email !== undefined) updates.email = email;
     if (score !== undefined) updates.score = score;
+    if (pfp !== undefined) updates.pfp = pfp;
 
     if (Object.keys(updates).length === 0) {
         return res.status(400).json({ error: "No fields provided for update" });
