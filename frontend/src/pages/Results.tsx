@@ -6,40 +6,44 @@ import { useUser } from "../UserContext";
 import { getAuth } from "firebase/auth";
 
 interface ResultsState {
-  guess: LatLngExpression;
+    guess: LatLngExpression;
+    correctLocation: LatLngExpression;
 }
 
 const ResultsPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const state = location.state as ResultsState;
-  const guess = state.guess;
-  const auth = getAuth();
+    
+    const navigate = useNavigate();
+    const location = useLocation();
+    // const state = location.state as ResultsState;
+    const { guess, correctLocation } = location.state as ResultsState;
+    // const guess = state.guess;
+    const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
 
-  const { user, addPoints } = useUser();
-  const [pointsEarned, setPointsEarned] = useState(0);
+    // const correctLocation: LatLngExpression = [42.4470, -76.4832]; // Cornell coords
+    // const correctLocation = state.correctLocation;
+    const distMeters = L.latLng(correctLocation).distanceTo(L.latLng(guess));
 
-  const correctLocation: LatLngExpression = [42.4470, -76.4832]; // Cornell coords
-  const distMeters = L.latLng(guess).distanceTo(L.latLng(correctLocation));
+    const customMarker = new L.Icon({
+        iconUrl: "/Bear-icon.png", // path to your image
+        iconSize: [40, 40],     // width and height of the icon
+        iconAnchor: [20, 40],   // point of the icon that corresponds to the marker's location
+        popupAnchor: [0, -40],  // point from which the popup opens relative to the icon
+        //shadowUrl: "/marker-shadow.png", // optional
+        shadowSize: [50, 50],          // optional
+        shadowAnchor: [20, 50],        // optional
+    });
 
-  // Custom marker icon
-  const customMarker = new L.Icon({
-    iconUrl: "/Bear-icon.png",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-    popupAnchor: [0, -40],
-  });
-
-  // Calculate points based on distance
-  const getScore = (dist: number) => {
-    if (dist > 3000) return 0;
-    const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
-    for (let i = 1; i < scoreCutOffs.length; i++) {
-      if (dist > scoreCutOffs[i]) {
-        return Math.round(
-          10 * (dist - scoreCutOffs[i]) / (scoreCutOffs[i] - scoreCutOffs[i - 1]) + 10 * i
-        );
-      }
+    const getScore = (dist: number) => {
+        if (dist > 3000) {
+            return 0;
+        }
+        const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
+        for (let i: number = 1; i < scoreCutOffs.length; i++) {
+            if (dist > scoreCutOffs[i]) {
+                return (10*(dist - scoreCutOffs[i])/(scoreCutOffs[i]-scoreCutOffs[i-1]) + 10*(i)).toFixed(2);
+            }
+        }
+        return -10000;
     }
     return 0;
   };

@@ -21,6 +21,22 @@ interface UserData {
     // Add other fields you might need, like lastLogin or createdAt
 }
 
+app.get("/locations/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const doc = await db.collection("locations").doc(id).get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ error: "Location not found" });
+        }
+
+        res.json(doc.data());
+    } catch (error) {
+        console.error("Error fetching location:", error);
+        res.status(500).json({ error: "Failed to load location" });
+    }
+});
 
 // GET /users/:uid — get a specific user by UID
 app.get("/users/:uid", async (req, res) => {
