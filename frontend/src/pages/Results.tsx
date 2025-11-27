@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import L, { LatLngExpression} from "leaflet";
 import InteractiveMap from "../components/Map";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 
 interface ResultsState {
@@ -10,15 +10,17 @@ interface ResultsState {
 }
 
 const ResultsPage = () => {
+    
     const navigate = useNavigate();
     const location = useLocation();
-    const state = location.state as ResultsState;
-    const guess = state.guess;
+    // const state = location.state as ResultsState;
+    const { guess, correctLocation } = location.state as ResultsState;
+    // const guess = state.guess;
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
 
     // const correctLocation: LatLngExpression = [42.4470, -76.4832]; // Cornell coords
-    const correctLocation = state.correctLocation;
-    const distMeters = L.latLng(guess).distanceTo(L.latLng(correctLocation));
+    // const correctLocation = state.correctLocation;
+    const distMeters = L.latLng(correctLocation).distanceTo(L.latLng(guess));
 
     const customMarker = new L.Icon({
         iconUrl: "/Bear-icon.png", // path to your image

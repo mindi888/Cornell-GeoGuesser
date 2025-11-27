@@ -3,19 +3,14 @@ import { useNavigate } from "react-router-dom";
 import InteractiveMap from "../components/Map";
 import type { LatLngExpression } from "leaflet";
 
-interface CorrectLocation {
-    lat: number;
-    lng: number;
-}
-
 const PlayPage = () => {
     const navigate = useNavigate();
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [imageFileName, setImageFileName] = useState<string | null>(null);
-    const [guessImgNum, setGuessImgNum] = useState<number | null>(null);
+    const [correctLocation, setCorrectLocation] = useState<LatLngExpression | null>(null);
 
     const images = Object.fromEntries(
-        Array.from({ length: 49 }, (_, i) => [
+        Array.from({ length: 48 }, (_, i) => [
             i + 1,
             new URL(`../assets/Locations/img${i + 1}.JPG`, import.meta.url).href
         ])
@@ -23,10 +18,15 @@ const PlayPage = () => {
 
     // Log marker position changes for debugging
     useEffect(() => {
-        const random = Math.floor(Math.random() * 49) + 1;
-        setGuessImgNum(random);
-        guessImgNum != null && setImageFileName(images[guessImgNum]);
-    }, [guessImgNum]);
+        const random = Math.floor(Math.random() * 48) + 1;
+        setImageFileName(images[random]);
+        fetch(`http://localhost:8080/locations/img${random}.JPG`)
+            .then(res => res.json())
+            .then(data => {
+                setCorrectLocation([data.latitude, data.longitude]);
+            })
+            .catch(err => console.error(err));
+    }, []);
 
     useEffect(() => {
         console.log("Marker position set to:", markerPosition);
@@ -38,15 +38,11 @@ const PlayPage = () => {
             alert("Place a pin on the map first!");
             return;
         }
-        if (!guessImgNum) {
-            alert("Image needs to load");
-            return;
-        }
         // navigate("/results", { state: { guess: markerPosition } });
         navigate("/results", { 
             state: { 
                 guess: markerPosition,
-                // correctLocation: [correctCoords.lat, correctCoords.lng] // Pass as LatLngExpression
+                correctLocation: correctLocation // Pass as LatLngExpression
             } 
         });
 
@@ -73,7 +69,7 @@ const PlayPage = () => {
 
             {/* RIGHT: IMAGE */}
             <div style={{ flex: 1}}>
-                {imageFileName ? guessImgNum != null && (
+                {imageFileName ? (
                     <img src={imageFileName} 
                     alt="Location" style={{ width: "100%", objectFit: "cover"}}/>
                 ) : (
