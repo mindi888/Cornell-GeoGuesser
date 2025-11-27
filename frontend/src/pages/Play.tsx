@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import InteractiveMap from "../components/Map";
 import type { LatLngExpression } from "leaflet";
@@ -11,6 +11,7 @@ const PlayPage = () => {
     const [imageFileName, setImageFileName] = useState<string | null>(null);
     const [correctLocation, setCorrectLocation] = useState<LatLngExpression | null>(null);
     const{user, addPoints} = useUser();
+    const hasInitialized = useRef(false);
 
     const images = Object.fromEntries(
         Array.from({ length: 48 }, (_, i) => [
@@ -21,6 +22,8 @@ const PlayPage = () => {
 
     // Log marker position changes for debugging
     useEffect(() => {
+        if (hasInitialized.current) return; // block second React dev run
+        hasInitialized.current = true;
         console.log("entered useeffect");
         if(!user){
             console.log("entered if statement");
@@ -38,6 +41,8 @@ const PlayPage = () => {
 
     useEffect(() => {
         console.log("Marker position set to:", markerPosition);
+        console.log("Current Location at:", correctLocation);
+        console.log("Current Location at:", imageFileName);
     }, [markerPosition]);
 
 
