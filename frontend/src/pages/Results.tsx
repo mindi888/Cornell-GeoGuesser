@@ -123,7 +123,7 @@ useEffect(() => {
 
       <p style={{
             marginBottom: "5px", 
-        }}>Your distance from goal: {distMeters.toFixed(2)} meters</p>
+        }}>Your distance from Beebe: {distMeters.toFixed(2)} meters</p>
       <p style={{
             marginBottom: "5px", 
             marginTop: "0px"
