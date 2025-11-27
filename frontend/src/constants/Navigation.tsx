@@ -1,5 +1,3 @@
-import Weather from "../pages/Weather";
-import Counter from "../pages/Counter";
 import HomePage from "../pages/Home";
 import LoginPage from "../pages/Login";
 import PlayPage from "../pages/Play";
@@ -50,15 +48,5 @@ export const PATHS: {
         link: "/results",
         label: "Results",
         element: <ResultsPage />,
-    },
-    {
-        link: "/weather",
-        label: "Weather",
-        element: <Weather />,
-    },
-    {
-        link: "/counter",
-        label: "Counter",
-        element: <Counter />,
     },
 ];
