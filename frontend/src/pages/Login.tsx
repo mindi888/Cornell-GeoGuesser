@@ -45,7 +45,7 @@ const LoginPage = () => {
       style={{
         height: "100vh",
         width: "100vw",
-        backgroundImage: `url("/cornell_cover.jpg")`,
+        backgroundImage: `url("/Cover_Art.png")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         display: "flex",
@@ -57,33 +57,29 @@ const LoginPage = () => {
         position: "relative",
       }}
     >
-      {/* Overlay */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.45)",
-          zIndex: 0,
-        }}
-      />
 
       {/* Content */}
       <div
         style={{
+          height: "100vh",
+          width: "100vw",
+          backgroundImage: `url("/cover_art.png")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          display: "flex",
+          justifyContent: "flex-end", // pushes content to bottom
+          alignItems: "center",       // keeps it horizontally centered
+          flexDirection: "column",
+          paddingBottom: "5.7%",       // adjust how far up from bottom
           position: "relative",
-          zIndex: 1,
-          textAlign: "center",
         }}
       >
-        <h1 style={{ fontSize: "5rem", marginBottom: "20px" }}>
-          Cornell GeoGuesser
-        </h1>
 
         <button
           onClick={handleLoginClick}
           style={{
-            padding: "12px 24px",
-            fontSize: "1.2rem",
+            padding: "13px 24px",
+            fontSize: "1.5rem",
             borderRadius: "8px",
             border: "none",
             cursor: "pointer",
