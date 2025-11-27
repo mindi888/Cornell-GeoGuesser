@@ -92,14 +92,15 @@ useEffect(() => {
             minHeight: "100vh",
             width: "100vw",   
             padding: "24px",
-            boxSizing: "border-box"
+            boxSizing: "border-box",
+            backgroundColor: "rgba(226, 206, 171, 1)"
         }}>
       <h1>Results</h1>
 
       <MapContainer
         center={correctLocation}
         zoom={13}
-        style={{ width: "400px", height: "400px" }}
+        style={{ width: "800px", height: "400px" }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -120,13 +121,22 @@ useEffect(() => {
         />
       </MapContainer>
 
-      <p>Your distance from goal: {distMeters.toFixed(2)} meters</p>
-      <p>Points Earned: {pointsEarned}</p>
-      <p>Total Points: {user?.score}</p>
+      <p style={{
+            marginBottom: "5px", 
+        }}>Your distance from goal: {distMeters.toFixed(2)} meters</p>
+      <p style={{
+            marginBottom: "5px", 
+            marginTop: "0px"
+        }}>Points Earned: {pointsEarned}</p>
+      <p style={{
+            marginBottom: "5px", 
+            marginTop: "0px"
+        }}>Total Points: {user?.score}</p>
 
       <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-        <button onClick={handlePlayClick}>Play Again</button>
-        <button onClick={handleHomeClick}>Home</button>
+        <button style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}}
+        onClick={handlePlayClick}>Play Again</button>
+        <button style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}} onClick={handleHomeClick}>Home</button>
       </div>
     </div>
   );

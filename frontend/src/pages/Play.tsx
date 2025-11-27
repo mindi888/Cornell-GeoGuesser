@@ -81,10 +81,14 @@ const PlayPage = () => {
             justifyContent: "center",
             minHeight: "100vh",
             width: "100vw",   
-            padding: "24px",
-            boxSizing: "border-box"
+            padding: "50px",
+            boxSizing: "border-box",
+            backgroundColor: "rgba(226, 206, 171, 1)",
         }}>
-            <h1>Can you guess where in Cornell this image is located?</h1>
+            <h1 style={{
+            marginBottom: "5px", 
+            marginTop: "0px"
+        }}>Can you find where Beebe is?</h1>
             <p>Click on the map to place your marker, then click "Guess" to submit.</p>
 
             <div
@@ -126,7 +130,7 @@ const PlayPage = () => {
             </div>
 
             <button
-                style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem" }}
+                style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}}
                 onClick={handleGuessClick}
             >
                 Guess
