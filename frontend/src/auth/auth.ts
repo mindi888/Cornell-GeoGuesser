@@ -31,7 +31,7 @@ export const signIn = async () => {
                 'Content-Type': 'application/json'
             },
             // Optionally, pass other data if your backend expects it
-            body: JSON.stringify({ email: user.email, name: user.displayName }) 
+            body: JSON.stringify({ email: user.email, name: user.displayName}) 
         });
 
         if (!backendResponse.ok) {
