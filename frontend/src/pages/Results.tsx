@@ -18,10 +18,12 @@ const ResultsPage = () => {
     const { guess, correctLocation } = location.state as ResultsState;
     // const guess = state.guess;
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
-
     // const correctLocation: LatLngExpression = [42.4470, -76.4832]; // Cornell coords
     // const correctLocation = state.correctLocation;
     const distMeters = L.latLng(correctLocation).distanceTo(L.latLng(guess));
+    const auth = getAuth();
+    const{user, addPoints} = useUser();
+    const[pointsEarned, setPointsEarned] = useState(0);
 
     const customMarker = new L.Icon({
         iconUrl: "/Bear-icon.png", // path to your image
@@ -40,17 +42,20 @@ const ResultsPage = () => {
         const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
         for (let i: number = 1; i < scoreCutOffs.length; i++) {
             if (dist > scoreCutOffs[i]) {
-                return (10*(dist - scoreCutOffs[i])/(scoreCutOffs[i]-scoreCutOffs[i-1]) + 10*(i)).toFixed(2);
+                return Math.round(10 * (dist - scoreCutOffs[i]) / (scoreCutOffs[i] - scoreCutOffs[i - 1]) + 10 * i);
             }
         }
         return -10000;
     }
-    return 0;
-  };
+    // return 0;
 
-  const effectRan = useRef(false); //makes it so stuff doesn't double when useEffect runs twice
+
+const effectRan = useRef(false); //makes it so stuff doesn't double when useEffect runs twice
 
 useEffect(() => {
+  if(!user){
+    navigate("/");
+  }
   if (!user || effectRan.current) return;
 
   const earned = getScore(distMeters);
@@ -117,5 +122,6 @@ useEffect(() => {
     </div>
   );
 };
+
 
 export default ResultsPage;

@@ -2,12 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import InteractiveMap from "../components/Map";
 import type { LatLngExpression } from "leaflet";
+import { useUser } from "../UserContext";
+
 
 const PlayPage = () => {
     const navigate = useNavigate();
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     const [imageFileName, setImageFileName] = useState<string | null>(null);
     const [correctLocation, setCorrectLocation] = useState<LatLngExpression | null>(null);
+    const{user, addPoints} = useUser();
 
     const images = Object.fromEntries(
         Array.from({ length: 48 }, (_, i) => [
@@ -18,6 +21,11 @@ const PlayPage = () => {
 
     // Log marker position changes for debugging
     useEffect(() => {
+        console.log("entered useeffect");
+        if(!user){
+            console.log("entered if statement");
+            navigate("/");
+        }
         const random = Math.floor(Math.random() * 48) + 1;
         setImageFileName(images[random]);
         fetch(`http://localhost:8080/locations/img${random}.JPG`)
