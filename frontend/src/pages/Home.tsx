@@ -183,7 +183,7 @@ const HomePage = () => {
             {user && (
             <div style={{ position: "relative" }}>
                 <img
-                    src="/cover_art.png"
+                    src={user.pfp}
                     alt="Profile"
                     onClick={() => setOpen(!open)}
                     style={{
@@ -191,7 +191,7 @@ const HomePage = () => {
                     height: "77px",
                     borderRadius: "50%",
                     cursor: "pointer",
-                    objectFit: "cover",
+                    //objectFit: "cover",
                     border: "3px solid white",
                     }}
                 />
