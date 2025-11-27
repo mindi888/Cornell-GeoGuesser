@@ -13,6 +13,7 @@ const port = 8080;
 app.use(cors());
 app.use(express.json());
 
+
 interface UserData {
     name: string;
     email: string;
@@ -37,22 +38,19 @@ app.get("/locations/:id", async (req, res) => {
     }
 });
 
-/* --- GET /users (list all logged-in users from Firestore) --- */
-// Make the handler function 'async'
-app.get("/users", async (req, res) => {
-    console.log("GET /users called");
-    try {
-        const snapshot = await db.collection('users').get();
-        // Map documents to the UserData interface + an ID
-        const users = snapshot.docs.map(doc => ({ 
-            id: doc.id, 
-            ...doc.data() as UserData 
-        }));
-        res.json(users);
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        res.status(500).json({ error: "Failed to retrieve users" });
-    }
+// GET /users/:uid — get a specific user by UID
+app.get("/users/:uid", async (req, res) => {
+  const { uid } = req.params;
+
+  try {
+    const userDoc = await db.collection("users").doc(uid).get();
+    if (!userDoc.exists) return res.status(404).json({ error: "User not found" });
+
+    res.json({ user: { id: uid, ...userDoc.data() } });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ error: "Failed to fetch user" });
+  }
 });
 
 /* --- POST /api/secure-login-action --- */

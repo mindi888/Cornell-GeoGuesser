@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import L, { LatLngExpression} from "leaflet";
-import InteractiveMap from "../components/Map";
-import { useEffect, useState } from "react";
+import L, { LatLngExpression } from "leaflet";
+import { useEffect, useRef, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import { useUser } from "../UserContext";
+import { getAuth } from "firebase/auth";
 
 interface ResultsState {
     guess: LatLngExpression;
@@ -44,61 +45,77 @@ const ResultsPage = () => {
         }
         return -10000;
     }
+    return 0;
+  };
 
-    // Update user score
-    fetch("/backend/api/users/update-score", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: distMeters }),
+  const effectRan = useRef(false); //makes it so stuff doesn't double when useEffect runs twice
+
+useEffect(() => {
+  if (!user || effectRan.current) return;
+
+  const earned = getScore(distMeters);
+  setPointsEarned(earned);
+  //adds points to user, the one stored locally with a field for score
+  addPoints(earned);
+
+  //curUser is the one from auth that doesn't have field for score
+  const curUser = auth.currentUser;
+  if (curUser) {
+    fetch(`http://localhost:8080/users/${curUser.uid}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ score: user.score + earned }),
     })
-    .then((response) => response.json())
-    .then((data) => console.log("Score updated successfully:", data))
-    .catch((error) => console.error("Error updating score:", error));
+      .then(res => res.json())
+      .then(data => console.log("Score updated successfully:", data))
+      .catch(err => console.error("Error updating score:", err));
+  }
 
-    const handlePlayClick = () => navigate("/play");
-    const handleHomeClick = () => navigate("/home");
+  effectRan.current = true;
+  //console.log("local user score:"+user.score)
+}, []);
 
-    return (
-        <div style={{ textAlign: "center", padding: "30px" }}>
-            <h1>Results</h1>
-                <MapContainer
-                    center={correctLocation}
-                    zoom={13}
-                    style={{ width: "400px", height: "400px" }} // square map
-                    >
-                    <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; OpenStreetMap contributors'
-                    />
+  const handlePlayClick = () => navigate("/play");
+  const handleHomeClick = () => navigate("/home");
 
-                    {/* User's marker */}
-                    {markerPosition && <Marker position={markerPosition} />}
+  return (
+    <div style={{ textAlign: "center", padding: "30px" }}>
+      <h1>Results</h1>
 
-                    {/* Correct location marker */}
-                    <Marker position={correctLocation}>
-                        <Popup>Correct Location</Popup>
-                    </Marker>
-                    <Marker position={guess} icon={customMarker}>
-                        <Popup>Your Guess</Popup>
-                    </Marker>
+      <MapContainer
+        center={correctLocation}
+        zoom={13}
+        style={{ width: "400px", height: "400px" }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution="&copy; OpenStreetMap contributors"
+        />
 
-                    <Polyline
-                        positions={[guess, correctLocation]}
-                        pathOptions={{ color: "red", weight: 3 }} // optional styling
-                    />
-                </MapContainer>
-                
+        <Marker position={correctLocation}>
+          <Popup>Correct Location</Popup>
+        </Marker>
 
-            <p>Your distance from goal: {distMeters.toFixed(2)} meters</p>
-            <p>Points Earned: {getScore(distMeters)} </p>
-            <p>Total Points: {/*access user total points*/} </p>
+        <Marker position={guess} icon={customMarker}>
+          <Popup>Your Guess</Popup>
+        </Marker>
 
-            <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-                <button onClick={handlePlayClick}>Play Again</button>
-                <button onClick={handleHomeClick}>Home</button>
-            </div>
-        </div>
-    );
+        <Polyline
+          positions={[guess, correctLocation]}
+          pathOptions={{ color: "red", weight: 3 }}
+        />
+      </MapContainer>
+
+      <p>Your distance from goal: {distMeters.toFixed(2)} meters</p>
+      <p>Points Earned: {pointsEarned}</p>
+      <p>Total Points: {user?.score}</p>
+
+      <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+        <button onClick={handlePlayClick}>Play Again</button>
+        <button onClick={handleHomeClick}>Home</button>
+      </div>
+    </div>
+  );
 };
 
 export default ResultsPage;
