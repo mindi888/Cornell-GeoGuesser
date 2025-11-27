@@ -21,6 +21,12 @@ interface UserData {
     // Add other fields you might need, like lastLogin or createdAt
 }
 
+// Interface for the data you will return to the frontend
+interface RankedUser extends UserData {
+    id: string; // The document ID (UID)
+    rank: number;
+}
+
 app.get("/locations/:id", async (req, res) => {
     const { id } = req.params;
 
@@ -97,6 +103,46 @@ app.post("/api/secure-login-action", async (req, res) => {
         // Token was invalid, expired, or something went wrong with auth
         res.status(401).send("Unauthorized: Invalid token");
         console.error('Error during login process:', error)
+    }
+});
+
+/* --- GET /users (Fetches, sorts, and ranks all users) --- */
+app.get("/users", async (req, res) => {
+    console.log("GET /users called for leaderboard");
+    try {
+        // 1. Query Firestore: Order by 'score' field in descending order (highest score first)
+        const snapshot = await db.collection('users').orderBy('score', 'desc').get();
+
+        let currentRank = 1;
+        let previousScore = -1; // Initialize with a score lower than any possible actual score
+
+        // 2. Map documents and assign rank
+        const rankedUsers: RankedUser[] = snapshot.docs.map((doc, index) => {
+            const userData = doc.data() as UserData;
+            
+            // Handle ties: If the current score is the same as the previous, keep the same rank.
+            if (userData.score !== previousScore) {
+                // If the score is different, update the rank to the current index + 1
+                currentRank = index + 1;
+            }
+            
+            // Update the previous score for the next iteration
+            previousScore = userData.score;
+
+            // 3. Return the user data with the calculated rank
+            return {
+                id: doc.id, 
+                rank: currentRank,
+                ...userData 
+            } as RankedUser;
+        });
+
+        // The frontend will now receive a list of users, each with an assigned rank
+        res.json(rankedUsers);
+
+    } catch (error) {
+        console.error("Error fetching users/leaderboard:", error);
+        res.status(500).json({ error: "Failed to retrieve users" });
     }
 });
 
