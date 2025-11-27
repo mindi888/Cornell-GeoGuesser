@@ -8,6 +8,16 @@ import pfp4 from "../assets/pfp/pfp4.png";
 import { useUser } from "../UserContext";
 import { getAuth } from "firebase/auth";
 
+// Define the shape of the data you will fetch from the backend
+interface FetchedProfileData {
+    id: string;
+    name: string;
+    email: string;
+    score: number;
+    pfp: string;
+    rank: number;
+}
+
 const pfps = [pfp1, pfp2, pfp3, pfp4];
 
 const ProfilePage = () => {
@@ -17,11 +27,44 @@ const ProfilePage = () => {
   const auth = getAuth();
   const curUser = auth.currentUser;
 
+  const [profile, setProfile] = useState<FetchedProfileData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     if (!user) {
       navigate("/");
     }
-  }, []);
+
+if (!curUser) {
+        setIsLoading(false);
+        return;
+    }
+
+    const fetchProfileData = async () => {
+        try {
+            // Use the backend endpoint to get the user's data by UID
+            const response = await fetch(`http://localhost:8080/users/${curUser.uid}`);
+            
+            if (!response.ok) {
+                throw new Error("Failed to fetch user profile data.");
+            }
+
+            const data = await response.json();
+            
+            // Assuming the backend returns { user: { ...data } }
+            setProfile(data.user as FetchedProfileData); 
+
+        } catch (err) {
+            console.error("Error fetching profile data with rank:", err);
+            // Optionally set an error state here
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    fetchProfileData();
+
+  }, [user, curUser, navigate]);
 
   const handleHomeClick = () => navigate("/home");
 
@@ -109,9 +152,18 @@ const ProfilePage = () => {
 
         {/* Right Column: Profile Info */}
         <div style={{marginTop: "40px", marginLeft: "50px", display: "flex", flexDirection: "column", justifyContent: "flex-start", fontSize: "22px" }}>
-          <h1 style={{ fontSize: "50px", marginBottom: "10px", marginTop: "0px"}}>{user?.name}</h1>
-          <p style={{marginBottom: "5px"}}>Total Score: {user?.score}</p>
-          <p>Ranking: {/* user?.rank */}</p>
+          {/* Show loading state */}
+            {isLoading && <h1>Loading...</h1>}
+            
+            {/* Show content once loaded */}
+            {!isLoading && profile && (
+                <>
+                    <h1 style={{ fontSize: "50px", marginBottom: "10px", marginTop: "0px"}}>{profile.name}</h1>
+                    <p style={{marginBottom: "5px"}}>Total Score: {profile.score.toFixed(0)}</p>
+                    <p>Ranking: #{profile.rank}</p> 
+                    <p style={{ fontSize: "16px", color: "#888", marginTop: "5px" }}></p>
+                </>
+            )}
         </div>
       </div>
     </div>

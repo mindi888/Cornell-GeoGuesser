@@ -45,19 +45,63 @@ app.get("/locations/:id", async (req, res) => {
     }
 });
 
-// GET /users/:uid — get a specific user by UID
+// // GET /users/:uid — get a specific user by UID
+// app.get("/users/:uid", async (req, res) => {
+//   const { uid } = req.params;
+
+//   try {
+//     const userDoc = await db.collection("users").doc(uid).get();
+//     if (!userDoc.exists) return res.status(404).json({ error: "User not found" });
+
+//     res.json({ user: { id: uid, ...userDoc.data() } });
+//   } catch (err) {
+//     console.error("Error fetching user:", err);
+//     res.status(500).json({ error: "Failed to fetch user" });
+//   }
+// });
+// GET /users/:uid — get a specific user by UID AND calculate rank dynamically
 app.get("/users/:uid", async (req, res) => {
-  const { uid } = req.params;
+    const { uid } = req.params;
 
-  try {
-    const userDoc = await db.collection("users").doc(uid).get();
-    if (!userDoc.exists) return res.status(404).json({ error: "User not found" });
+    try {
+        // 1. Fetch ALL users, sorted by score, to determine rank (Requires index!)
+        const snapshot = await db.collection('users').orderBy('score', 'desc').get();
+        
+        let currentRank = 1;
+        let previousScore = -1;
+        let foundUser: RankedUser | null = null;
 
-    res.json({ user: { id: uid, ...userDoc.data() } });
-  } catch (err) {
-    console.error("Error fetching user:", err);
-    res.status(500).json({ error: "Failed to fetch user" });
-  }
+        // 2. Iterate through the sorted list, calculate rank, and find the target user
+        snapshot.docs.forEach((doc, index) => {
+            const userData = doc.data() as UserData;
+            
+            // Calculate rank (same logic as GET /users)
+            if (userData.score !== previousScore) {
+                currentRank = index + 1;
+            }
+            previousScore = userData.score;
+
+            // Check if this is the user we are looking for
+            if (doc.id === uid) {
+                foundUser = {
+                    id: uid,
+                    rank: currentRank,
+                    ...userData
+                };
+            }
+        });
+
+        if (!foundUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // 3. Return the found user with their calculated rank
+        res.json({ user: foundUser });
+
+    } catch (err) {
+        console.error("Error fetching and ranking user:", err);
+        res.status(500).json({ error: "Failed to fetch user and calculate rank" });
+    }
 });
 
 /* --- POST /api/secure-login-action --- */
