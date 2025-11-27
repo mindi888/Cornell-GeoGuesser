@@ -84,7 +84,16 @@ useEffect(() => {
   const handleHomeClick = () => navigate("/home");
 
   return (
-    <div style={{ textAlign: "center", padding: "30px" }}>
+    <div style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",  
+            justifyContent: "center",
+            minHeight: "100vh",
+            width: "100vw",   
+            padding: "24px",
+            boxSizing: "border-box"
+        }}>
       <h1>Results</h1>
 
       <MapContainer
