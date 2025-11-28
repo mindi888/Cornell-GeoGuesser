@@ -32,13 +32,32 @@ const LoginPage = () => {
         const res = await fetch(`http://localhost:8080/users/${curUser.uid}`);
         const data = await res.json();
         setUser(data.user); // store in your UserContext
-        //console.log("userContext data set");
         if(user){
+          console.log("userContext data set:"+user.email);
           if(user.pfp==null){
-            //console.log("entered no pfp in statement");
+            console.log("entered no pfp if statement");
             changePfp(pfp1);
           }
         }
+        else{
+          changePfp(pfp1);
+        }
+
+        //const { setUser } = useUser();
+        // if(user){
+        //   setUser({
+        //     uid: user.uid,
+        //     name: data.userData.name,
+        //     email: data.userData.email,
+        //     score: data.userData.score,
+        //     pfp: data.userData.pfp,
+        //   });
+
+        //   if(user.pfp==null){
+        //     //console.log("entered no pfp in statement");
+        //     changePfp(pfp1);
+        //   }
+        // }
       }
 
       setIsLoggedIn(true);

@@ -51,20 +51,26 @@ const ResultsPage = () => {
     // return 0;
 
 
-const effectRan = useRef(false); //makes it so stuff doesn't double when useEffect runs twice
-
 useEffect(() => {
-  if(!user){
+  if (!user) {
     navigate("/");
+    return;
   }
-  if (!user || effectRan.current) return;
+
+  const roundKey = `scored-${user.uid}-${JSON.stringify(correctLocation)}-${JSON.stringify(guess)}`;
+  const pointsKey = `${roundKey}-points`;
+
+  // if already scored, restore pointsEarned from storage
+  const storedPoints = localStorage.getItem(pointsKey);
+  if (storedPoints) {
+    setPointsEarned(parseInt(storedPoints, 10));
+    return;
+  }
 
   const earned = getScore(distMeters);
   setPointsEarned(earned);
-  //adds points to user, the one stored locally with a field for score
   addPoints(earned);
 
-  //curUser is the one from auth that doesn't have field for score
   const curUser = auth.currentUser;
   if (curUser) {
     fetch(`http://localhost:8080/users/${curUser.uid}`, {
@@ -77,9 +83,12 @@ useEffect(() => {
       .catch(err => console.error("Error updating score:", err));
   }
 
-  effectRan.current = true;
-  //console.log("local user score:"+user.score)
-}, []);
+  // mark this round as scored and persist earned points
+  localStorage.setItem(roundKey, "true");
+  localStorage.setItem(pointsKey, earned.toString());
+}, [user, distMeters, guess, correctLocation]);
+
+
 
   const handlePlayClick = () => navigate("/play");
   const handleHomeClick = () => navigate("/home");
