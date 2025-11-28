@@ -280,7 +280,7 @@ const HomePage = () => {
             height: "100px",
             display: "flex",
             justifyContent: "space-between",
-            padding: "30px",
+            padding: "0 45px",
             position: "relative",
             color: "black",
             fontSize: "20px"
