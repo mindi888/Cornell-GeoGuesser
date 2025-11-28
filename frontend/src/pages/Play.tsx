@@ -89,7 +89,7 @@ const PlayPage = () => {
             marginBottom: "5px", 
             marginTop: "0px"
         }}>Can you find where Beebe is?</h1>
-            <p>Click on the map to place your marker, then click "Guess" to submit.</p>
+            <p style={{marginTop: "5px"}}>Click on the map to place your marker, then click "Guess" to submit.</p>
 
             <div
                 style={{
@@ -97,7 +97,7 @@ const PlayPage = () => {
                     justifyContent: "space-evenly",
                     alignItems: "center",
                     gap: "50px",
-                    marginTop: "24px",
+                    marginTop: "10px",
                     flexDirection: "row",
                     width: "100%", 
                     maxWidth: "1600px" 
