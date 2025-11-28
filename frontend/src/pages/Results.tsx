@@ -9,6 +9,7 @@ import homeButton from "../assets/homebutton.png";
 interface ResultsState {
     guess: LatLngExpression;
     correctLocation: LatLngExpression;
+    timedOut: boolean;
 }
 
 const ResultsPage = () => {
@@ -16,12 +17,15 @@ const ResultsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     // const state = location.state as ResultsState;
-    const { guess, correctLocation } = location.state as ResultsState;
+    const { guess, correctLocation, timedOut } = location.state as ResultsState;
     // const guess = state.guess;
     const [markerPosition, setMarkerPosition] = useState<LatLngExpression | null>(null);
     // const correctLocation: LatLngExpression = [42.4470, -76.4832]; // Cornell coords
     // const correctLocation = state.correctLocation;
-    const distMeters = L.latLng(correctLocation).distanceTo(L.latLng(guess));
+    const distMeters = (guess && correctLocation) 
+        ? L.latLng(correctLocation).distanceTo(L.latLng(guess))
+        : Infinity;
+
     const auth = getAuth();
     const{user, addPoints} = useUser();
     const[pointsEarned, setPointsEarned] = useState(0);
@@ -37,7 +41,7 @@ const ResultsPage = () => {
     });
 
     const getScore = (dist: number) => {
-        if (dist > 3000) {
+        if (timedOut || dist > 3000) {
             return 0;
         }
         const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
@@ -54,32 +58,40 @@ const ResultsPage = () => {
 const effectRan = useRef(false); //makes it so stuff doesn't double when useEffect runs twice
 
 useEffect(() => {
-  if(!user){
-    navigate("/");
-  }
-  if (!user || effectRan.current) return;
+      if(!user){
+        navigate("/");
+      }
+      if (!user || effectRan.current) return;
 
-  const earned = getScore(distMeters);
-  setPointsEarned(earned);
-  //adds points to user, the one stored locally with a field for score
-  addPoints(earned);
+      // 1. Calculate points
+      let earned = 0;
+      if (timedOut) {
+          earned = 0; // Explicitly zero points for time out
+      } else if (guess) {
+          earned = getScore(distMeters);
+      } else {
+          // This should ideally not happen if timedOut is false and guess is null
+          earned = 0; 
+      }
+      
+      setPointsEarned(earned);
+      addPoints(earned);
 
-  //curUser is the one from auth that doesn't have field for score
-  const curUser = auth.currentUser;
-  if (curUser) {
-    fetch(`http://localhost:8080/users/${curUser.uid}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ score: user.score + earned }),
-    })
-      .then(res => res.json())
-      .then(data => console.log("Score updated successfully:", data))
-      .catch(err => console.error("Error updating score:", err));
-  }
+      // 2. Update Firestore score
+      const curUser = auth.currentUser;
+      if (curUser) {
+        fetch(`http://localhost:8080/users/${curUser.uid}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ score: user.score + earned }),
+        })
+          .then(res => res.json())
+          .then(data => console.log("Score updated successfully:", data))
+          .catch(err => console.error("Error updating score:", err));
+      }
 
-  effectRan.current = true;
-  //console.log("local user score:"+user.score)
-}, []);
+      effectRan.current = true;
+    }, [timedOut, guess]);
 
   const handlePlayClick = () => navigate("/play");
   const handleHomeClick = () => navigate("/home");
@@ -97,7 +109,12 @@ useEffect(() => {
             backgroundColor: "rgba(226, 206, 171, 1)"
         }}>
       <h1>Results</h1>
-
+      {timedOut ? (
+          <h1 style={{ color: 'red' }}>Time's Up! Beebe Got Away!</h1>
+      ) : (
+          <h1>Results</h1>
+      )}
+      {guess ? (
       <MapContainer
         center={correctLocation}
         zoom={13}
@@ -121,10 +138,18 @@ useEffect(() => {
           pathOptions={{ color: "red", weight: 3 }}
         />
       </MapContainer>
+      ) : (
+          <div style={{ width: "800px", height: "400px", border: '2px solid red', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <h2>The correct location is not revealed when time runs out.</h2>
+          </div>
+      )}
 
-      <p style={{
-            marginBottom: "5px", 
-        }}>Your distance from Beebe: {distMeters.toFixed(2)} meters</p>
+      <p style={{marginBottom: "5px"}}>
+          {timedOut 
+              ? `Distance: N/A` 
+              : `Your distance from Beebe: ${distMeters.toFixed(2)} meters`
+          }
+      </p>
       <p style={{
             marginBottom: "5px", 
             marginTop: "0px"
