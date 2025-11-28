@@ -223,6 +223,7 @@ const HomePage = () => {
                         background: "none",
                         textAlign: "left",
                         cursor: "pointer",
+                        color: "black"
                         }}
                         onClick={handleProfileClick}
                     >
@@ -241,6 +242,7 @@ const HomePage = () => {
                         background: "none",
                         textAlign: "left",
                         cursor: "pointer",
+                        color: "black"
                         }}
                         onClick={handleSignOutClick}
                     >
