@@ -245,6 +245,7 @@ const HomePage = () => {
                         background: "none",
                         textAlign: "left",
                         cursor: "pointer",
+                        color: "black"
                         }}
                         onClick={handleProfileClick}
                     >
@@ -263,6 +264,7 @@ const HomePage = () => {
                         background: "none",
                         textAlign: "left",
                         cursor: "pointer",
+                        color: "black"
                         }}
                         onClick={handleSignOutClick}
                     >
@@ -273,6 +275,19 @@ const HomePage = () => {
             </div>
             )}
         </header>
+        <p style={{
+            width: "100%",
+            height: "100px",
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "30px",
+            position: "relative",
+            color: "black",
+            fontSize: "20px"
+            }}>You've lost Beebe! The mischievous bear ran off while you weren't looking. 
+            Thankfully, Beebe's active on instagram and is posting stories everywhere they go. 
+            Analyze the location in the image on your screen, determine where Beebe is, and click on the 
+            map to place your best guess. But be careful, if you wait too long, Beebe will get away again!</p>
       </div>
     );
 };
