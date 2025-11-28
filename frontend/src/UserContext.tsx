@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "./firebase"; 
 import { onAuthStateChanged } from "firebase/auth";
+import pfp1 from "./assets/pfp/pfp1.png"
 
 interface UserData {
   uid: string;
@@ -27,25 +28,45 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        console.log("logged in");
+        // if(user){
+        //   console.log("pfp:"+user.pfp);
+        // }
+        // else{
+        //   console.log("user is null");
+        // }
         // Optionally fetch extra data from your backend
         const res = await fetch(`http://localhost:8080/users/${firebaseUser.uid}`);
         const data = await res.json();
+        console.log("firebaseUser.uid:"+data.user.pfp);
 
-        setUser({
+        
+        setUser(
+          {
           uid: firebaseUser.uid,
-          name: data.user.name || firebaseUser.displayName || "",
+          name: data.user.name,
           email: firebaseUser.email || "",
           score: data.user.score || 0,
-          pfp: data.user.pfp || firebaseUser.photoURL || "",
-        });
+          pfp: data.user.pfp || pfp1,
+          }
+        );
+
+        if(user){
+          console.log("pfp:"+user.uid);
+        }
+        else{
+          console.log("user is null");
+        }
+
       } else {
+        console.log("logged out");
         setUser(null);
       }
       setLoading(false);
     });
 
     return unsubscribe;
-  }, []);
+  }, [auth]);
 
   const addPoints = (points: number) => {
     if (!user) return;

@@ -55,8 +55,6 @@ const ResultsPage = () => {
     // return 0;
 
 
-const effectRan = useRef(false); //makes it so stuff doesn't double when useEffect runs twice
-
 useEffect(() => {
       if(!user){
         navigate("/");

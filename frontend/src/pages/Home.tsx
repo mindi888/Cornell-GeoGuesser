@@ -13,7 +13,7 @@ interface RankedUser {
 
 const HomePage = () => {
     const navigate = useNavigate();
-    const{user} = useUser();
+    const{user, changePfp} = useUser();
     
     // New state to store the list of ranked users
     const [leaderboard, setLeaderboard] = useState<RankedUser[]>([]);
@@ -47,7 +47,14 @@ const HomePage = () => {
             }
         };
 
+        const fetchProfilePic = async() => {
+            if(user){
+                changePfp(user.pfp);
+            }
+        };
+
         fetchLeaderboard();
+        fetchProfilePic();
     },[]);
 
     const handleSignOutClick = async () => {
@@ -102,16 +109,31 @@ const HomePage = () => {
                         </thead>
                         <tbody>
                             {leaderboard.map((rankedUser) => (
-                                <tr 
-                                    key={rankedUser.id} 
-                                    style={rankedUser.id === user?.uid ? highlightedRowStyle : tableRowStyle}
-                                >
-                                    <td style={tableCellStyle}>{rankedUser.rank}</td>
-                                    <td style={tableCellStyle}>
-                                        {/* Highlight the current user's name */}
+                                <tr key={rankedUser.id} style={rankedUser.id === user?.uid ? highlightedRowStyle : tableRowStyle}>
+                                    <td
+                                        style={{
+                                        ...tableCellStyle,
+                                        backgroundColor: rankedUser.id === user?.uid ? "#dcf4bd" : "#f2eee8",
+                                        }}
+                                    >
+                                        {rankedUser.rank}
+                                    </td>
+                                    <td
+                                        style={{
+                                        ...tableCellStyle,
+                                        backgroundColor: rankedUser.id === user?.uid ? "#dcf4bd" : "#f2eee8",
+                                        }}
+                                    >
                                         {rankedUser.name} {rankedUser.id === user?.uid ? " (You)" : ""}
                                     </td>
-                                    <td style={tableCellStyle}>{rankedUser.score.toFixed(0)}</td>
+                                    <td
+                                        style={{
+                                        ...tableCellStyle,
+                                        backgroundColor: rankedUser.id === user?.uid ? "#dcf4bd" : "#f2eee8",
+                                        }}
+                                    >
+                                        {rankedUser.score.toFixed(0)}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -271,13 +293,13 @@ const HomePage = () => {
 };
 
 // Simple inline styles for the table (can be moved to a CSS file)
-const tableHeaderStyle = { padding: '10px', textAlign: 'left', background: '#f4f4f4' } as React.CSSProperties;
-const tableCellStyle = { padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' } as React.CSSProperties;
+const tableHeaderStyle = { padding: '10px', textAlign: 'left', color: 'white', background: '#4e3914' } as React.CSSProperties;
+const tableCellStyle = { padding: '10px', textAlign: 'left', background: '#f2eee8', borderBottom: '1px solid #ddd' } as React.CSSProperties;
 const tableRowStyle = { transition: 'background-color 0.2s' } as React.CSSProperties;
 const highlightedRowStyle = { 
     ...tableRowStyle, 
     fontWeight: 'bold', 
-    backgroundColor: '#e6ffe6', // Light green highlight
+    backgroundColor: '#dcf4bd', // Light green highlight
 } as React.CSSProperties;
 
 export default HomePage;
