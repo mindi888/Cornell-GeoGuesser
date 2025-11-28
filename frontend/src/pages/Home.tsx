@@ -264,8 +264,8 @@ const HomePage = () => {
             fontSize: "20px"
             }}>You've lost Beebe! The mischievous bear ran off while you weren't looking. 
             Thankfully, Beebe's active on instagram and is posting stories everywhere they go. 
-            Analyze the location in the image on your screen, determine where Beebe is, 
-            and click on the map to place your best guess!</p>
+            Analyze the location in the image on your screen, determine where Beebe is, and click on the 
+            map to place your best guess. But be careful, if you wait too long, Beebe will get away again!</p>
       </div>
     );
 };

@@ -108,7 +108,6 @@ useEffect(() => {
             boxSizing: "border-box",
             backgroundColor: "rgba(226, 206, 171, 1)"
         }}>
-      <h1>Results</h1>
       {timedOut ? (
           <h1 style={{ color: 'red' }}>Time's Up! Beebe Got Away!</h1>
       ) : (

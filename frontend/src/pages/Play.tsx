@@ -4,7 +4,7 @@ import InteractiveMap from "../components/Map";
 import type { LatLngExpression } from "leaflet";
 import { useUser } from "../UserContext";
 
-const TIME_LIMIT_SECONDS = 60;
+const TIME_LIMIT_SECONDS = 30;
 
 const PlayPage = () => {
     const navigate = useNavigate();
@@ -129,25 +129,24 @@ const PlayPage = () => {
             justifyContent: "center",
             minHeight: "100vh",
             width: "100vw",   
-            padding: "50px",
+            padding: "30px",
             boxSizing: "border-box",
             backgroundColor: "rgba(226, 206, 171, 1)",
         }}>
             <h1 style={{
-            marginBottom: "5px", 
+            marginBottom: "0px", 
             marginTop: "0px"
         }}>Can you find where Beebe is?</h1>
-            <p style={{marginTop: "5px"}}>Click on the map to place your marker, then click "Guess" to submit.</p>
-            <h2 style={{ color: timeLeft <= 10 ? 'red' : 'green', fontSize: '1.5rem', marginBottom: '10px' }}>
+            <p style={{marginTop: "2px"}}>Click on the map to place your marker, then click "Guess" to submit.</p>
+            <h2 style={{ color: timeLeft <= 10 ? 'red' : 'green', fontSize: '1.25rem', marginBottom: '8px', marginTop: "0px"}}>
                 Time Left: {timeLeft}s
             </h2>
-
             <div
                 style={{
                     display: "flex",
                     justifyContent: "space-evenly",
                     alignItems: "center",
-                    gap: "50px",
+                    gap: "30px",
                     marginTop: "10px",
                     flexDirection: "row",
                     width: "100%", 
@@ -181,7 +180,7 @@ const PlayPage = () => {
             </div>
 
             <button
-                style={{ marginTop: "16px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}}
+                style={{ marginTop: "10px", padding: "12px 24px", fontSize: "1.1rem", backgroundColor: "rgba(82, 48, 18, 0.8)", color: "white"}}
                 onClick={handleGuessClick}
                 disabled={hasTimedOut || !correctLocation} // Disable if timed out or still loading
             >
