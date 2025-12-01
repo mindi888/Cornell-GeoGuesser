@@ -5,6 +5,8 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet"
 import { useUser } from "../UserContext";
 import { getAuth } from "firebase/auth";
 import homeButton from "../assets/homebutton.png";
+import Player_Marker from "../assets/Player_Marker.png";
+import { pinIcon } from "../components/Map";
 
 interface ResultsState {
   guess: LatLngExpression;
@@ -27,12 +29,19 @@ const ResultsPage = () => {
   const [pointsEarned, setPointsEarned] = useState(0);
 
   const customMarker = new L.Icon({
-    iconUrl: "/Bear-icon.png",
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
+    iconUrl: Player_Marker,
+    iconSize: [45, 65],
+    iconAnchor: [22.5, 65],
     popupAnchor: [0, -40],
     shadowSize: [50, 50],
-    shadowAnchor: [20, 50],
+    shadowAnchor: [22.5, 65],
+  });
+
+  const profileMarker = new L.Icon({
+    iconUrl: user?.pfp || Player_Marker,
+    iconSize: [35, 35],
+    iconAnchor: [18.12, 60],
+    popupAnchor: [0, -40],
   });
 
   const getScore = (dist: number) => {
@@ -128,11 +137,15 @@ const ResultsPage = () => {
             attribution="&copy; OpenStreetMap contributors"
           />
 
-          <Marker position={correctLocation}>
+          <Marker position={correctLocation} icon={pinIcon}>
             <Popup>Beebe</Popup>
           </Marker>
 
           <Marker position={guess} icon={customMarker}>
+            <Popup>You</Popup>
+          </Marker>
+
+          <Marker position={guess} icon={profileMarker}>
             <Popup>You</Popup>
           </Marker>
 

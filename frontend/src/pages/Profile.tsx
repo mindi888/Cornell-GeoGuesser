@@ -5,6 +5,8 @@ import pfp1 from "../assets/pfp/pfp1.png";
 import pfp2 from "../assets/pfp/pfp2.png";
 import pfp3 from "../assets/pfp/pfp3.png";
 import pfp4 from "../assets/pfp/pfp4.png";
+import pfp5 from "../assets/pfp/pfp5.png";
+import pfp6 from "../assets/pfp/pfp6.png";
 import { useUser } from "../UserContext";
 import { getAuth } from "firebase/auth";
 
@@ -18,7 +20,7 @@ interface FetchedProfileData {
     rank: number;
 }
 
-const pfps = [pfp1, pfp2, pfp3, pfp4];
+const pfps = [pfp1, pfp2, pfp3, pfp4, pfp5, pfp6];
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -85,7 +87,7 @@ if (!curUser) {
   };
 
   return (
-    <div style={{ position: "relative", height: "100vh", width: "100vw", padding: "40px", backgroundColor: "rgba(226, 206, 171, 1)" }}>
+    <div style={{ position: "relative", minHeight: "100vh", width: "100vw", padding: "40px", backgroundColor: "rgba(226, 206, 171, 1)" }}>
       {/* Home Button (Top Right) */}
       <button
         onClick={handleHomeClick}
@@ -107,7 +109,7 @@ if (!curUser) {
       {/* Main Content: Two Columns */}
       <div style={{ display: "flex", gap: "50px" }}>
         {/* Left Column: Profile Picture + Button Gallery */}
-        <div style={{ marginTop: "40px", marginLeft: "30px", display: "flex", flexDirection: "column", alignItems: "center", gap: "40px" }}>
+        <div style={{ marginTop: "30px", marginLeft: "30px", display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
           {/* Current Profile Picture */}
           <img
             src={user?.pfp}

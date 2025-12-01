@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L, { LatLngExpression, Icon, IconOptions } from "leaflet";
+import Beebe_Marker from "../assets/Beebe_Marker.png";
+
 import "leaflet/dist/leaflet.css";
 
 // Define a custom pin icon
-const pinIcon: Icon<IconOptions> = L.icon({
-  iconUrl: "/Bear-icon.png", // replace with your marker image
-  iconSize: [38, 38],
-  iconAnchor: [19, 19],
+export const pinIcon: Icon<IconOptions> = L.icon({
+  iconUrl: Beebe_Marker, // replace with your marker image
+  iconSize: [45, 65],
+  iconAnchor: [22.5, 65],
 });
 
 interface MapProps {
