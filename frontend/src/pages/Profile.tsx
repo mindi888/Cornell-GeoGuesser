@@ -164,7 +164,7 @@ if (!curUser) {
                 <>
                     <h1 style={{ fontSize: "50px", marginBottom: "10px", marginTop: "0px"}}>{profile.name}</h1>
                     <p style={{marginBottom: "5px"}}>Total Score: {profile.score.toFixed(0)}</p>
-                    <p style={{marginBottom: "5px"}}>Average Score: {(profile.score/profile.plays).toFixed(0) || 0}</p>
+                    <p style={{marginBottom: "5px"}}>Average Score: {profile.plays > 0 ? (profile.score / profile.plays).toFixed(0) : 0}</p>
                     <p style={{marginBottom: "5px"}}>Total Plays: {profile.plays}</p>
                     <p>Ranking: #{profile.rank}</p> 
                     <p style={{ fontSize: "16px", color: "#888", marginTop: "5px" }}></p>
