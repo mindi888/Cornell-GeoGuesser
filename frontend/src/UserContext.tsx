@@ -8,6 +8,7 @@ interface UserData {
   name: string;
   email: string;
   score: number;
+  plays: number;
   pfp: string;
 }
 
@@ -15,6 +16,7 @@ interface UserContextType {
   user: UserData | null;
   setUser: (u: UserData | null) => void;
   addPoints: (points: number) => void;
+  addPlays: () => void;
   changePfp: (pic: string) => void;
 }
 
@@ -47,6 +49,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           name: data.user.name,
           email: firebaseUser.email || "",
           score: data.user.score || 0,
+          plays: data.user.plays ?? 0,
           pfp: data.user.pfp || pfp1,
           }
         );
@@ -73,13 +76,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setUser({ ...user, score: user.score + points });
   };
 
+  const addPlays = () => {
+    if (!user) return;
+    setUser({ ...user, plays: user.plays + 1 });
+  };
+
   const changePfp = (pic: string) => {
     if (!user) return;
     setUser({ ...user, pfp: pic });
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, addPoints, changePfp }}>
+    <UserContext.Provider value={{ user, setUser, addPoints, addPlays, changePfp }}>
       {!loading && children}
     </UserContext.Provider>
   );

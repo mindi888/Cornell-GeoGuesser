@@ -18,6 +18,7 @@ interface UserData {
     name: string;
     email: string;
     score: number;
+    plays: number;
     pfp: string;
     // Add other fields you might need, like lastLogin or createdAt
 }
@@ -45,20 +46,7 @@ app.get("/locations/:id", async (req, res) => {
     }
 });
 
-// // GET /users/:uid — get a specific user by UID
-// app.get("/users/:uid", async (req, res) => {
-//   const { uid } = req.params;
 
-//   try {
-//     const userDoc = await db.collection("users").doc(uid).get();
-//     if (!userDoc.exists) return res.status(404).json({ error: "User not found" });
-
-//     res.json({ user: { id: uid, ...userDoc.data() } });
-//   } catch (err) {
-//     console.error("Error fetching user:", err);
-//     res.status(500).json({ error: "Failed to fetch user" });
-//   }
-// });
 // GET /users/:uid — get a specific user by UID AND calculate rank dynamically
 app.get("/users/:uid", async (req, res) => {
     const { uid } = req.params;
@@ -140,6 +128,7 @@ app.post("/api/secure-login-action", async (req, res) => {
                 name: decodedToken.name || 'New User',
                 email: decodedToken.email,
                 score: 0,
+                plays:0,
             });
             res.status(201).json({ message: "New user created and logged in" });
         }
@@ -195,7 +184,7 @@ app.get("/users", async (req, res) => {
 app.put("/users/:id", async (req, res) => {
     const { id } = req.params;
     // We can update name, email, or score
-    const { name, email, score, pfp } = req.body; 
+    const { name, email, score, plays, pfp } = req.body; 
 
     console.log("PUT /users/" + id + " called");
 
@@ -204,6 +193,7 @@ app.put("/users/:id", async (req, res) => {
     if (name !== undefined) updates.name = name;
     if (email !== undefined) updates.email = email;
     if (score !== undefined) updates.score = score;
+    if (plays !== undefined) updates.plays = plays;
     if (pfp !== undefined) updates.pfp = pfp;
 
     if (Object.keys(updates).length === 0) {

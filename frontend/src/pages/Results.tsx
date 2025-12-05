@@ -25,7 +25,7 @@ const ResultsPage = () => {
       : Infinity;
 
   const auth = getAuth();
-  const { user, addPoints } = useUser();
+  const { user, addPoints, addPlays } = useUser();
   const [pointsEarned, setPointsEarned] = useState(0);
 
   const customMarker = new L.Icon({
@@ -89,13 +89,16 @@ const ResultsPage = () => {
 
     setPointsEarned(earned);
     addPoints(earned);
+    addPlays()
 
     const curUser = auth.currentUser;
+    const newScore = user.score + earned;
+    const newPlays = user.plays + 1;
     if (curUser) {
       fetch(`http://localhost:8080/users/${curUser.uid}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: user.score + earned }),
+        body: JSON.stringify({ score: newScore, plays: newPlays}),
       })
         .then((res) => res.json())
         .then((data) => console.log("Score updated successfully:", data))
