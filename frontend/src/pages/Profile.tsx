@@ -88,7 +88,17 @@ if (!curUser) {
   };
 
   return (
-    <div style={{ position: "relative", minHeight: "100vh", width: "100vw", padding: "40px", backgroundColor: "rgba(226, 206, 171, 1)" }}>
+    
+    <div style={{ 
+      position: "relative", 
+      minHeight: "100vh", 
+      width: "100vw", 
+      padding: "40px", 
+      backgroundImage: `url("/profile_background.png")`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      display: "flex",
+      }}>
       {/* Home Button (Top Right) */}
       <button
         onClick={handleHomeClick}
