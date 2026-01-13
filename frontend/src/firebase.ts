@@ -5,7 +5,8 @@ import { getAuth } from "firebase/auth";
 // Our web app's Firebase configuration (example)
 const firebaseConfig = {
   apiKey: "AIzaSyCHla7lE-lgqKpYIaNbs4jlg2bcuXHOSWI",
-  authDomain: "cornell-geoguesser-a5fdd.firebaseapp.com",
+  // authDomain: "cornell-geoguesser-a5fdd.firebaseapp.com",
+  authDomain: "cornell-geo-guesser-frontend.vercel.app",
   projectId: "cornell-geoguesser-a5fdd",
   storageBucket: "cornell-geoguesser-a5fdd.firebasestorage.app",
   messagingSenderId: "657767365273",
