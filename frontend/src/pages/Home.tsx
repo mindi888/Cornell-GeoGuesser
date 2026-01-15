@@ -26,7 +26,7 @@ const HomePage = () => {
     if(!user){
         navigate("/");
     }
-    }, [user, navigate]);
+    }, [user]);
     
     useEffect(() => {
         const fetchLeaderboard = async () => {
@@ -55,14 +55,14 @@ const HomePage = () => {
     }, [user?.uid]);
        
 
-    useEffect(() => {
-        const fetchProfilePic = async() => {
-            if(user?.pfp){
-                changePfp(user.pfp);
-            }
-        };
-        fetchProfilePic();
-    },[user, changePfp]);
+    // useEffect(() => {
+    //     const fetchProfilePic = async() => {
+    //         if(user?.pfp){
+    //             changePfp(user.pfp);
+    //         }
+    //     };
+    //     fetchProfilePic();
+    // },[user, changePfp]);
 
     const handleSignOutClick = async () => {
         await signOut();

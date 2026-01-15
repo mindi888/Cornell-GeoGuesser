@@ -2,6 +2,20 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "./firebase"; 
 import { onAuthStateChanged } from "firebase/auth";
 import pfp1 from "./assets/pfp/pfp1.png"
+import pfp2 from "./assets/pfp/pfp2.png"
+import pfp3 from "./assets/pfp/pfp3.png"
+import pfp4 from "./assets/pfp/pfp4.png"
+import pfp5 from "./assets/pfp/pfp5.png"
+import pfp6 from "./assets/pfp/pfp6.png"
+
+const pfpMap: Record<string, string> = {
+  "pfp1.png": pfp1,
+  "pfp2.png": pfp2,
+  "pfp3.png": pfp3,
+  "pfp4.png": pfp4,
+  "pfp5.png": pfp5,
+  "pfp6.png": pfp6,
+};
 
 interface UserData {
   uid: string;
@@ -38,6 +52,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           const res = await fetch(`http://localhost:8080/users/${firebaseUser.uid}`);
           const data = await res.json();
 
+          const pfpFromDB = data.user.pfp;
+          let pfpPath = pfp1;
+          
+          if (pfpFromDB?.includes('pfp')) {
+            const match = pfpFromDB.match(/pfp(\d+)/);
+            if (match) {
+              pfpPath = pfpMap[`pfp${match[1]}.png`] || pfp1;
+            }
+          }
         
         setUser(
           {
@@ -46,7 +69,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           email: firebaseUser.email || "",
           score: data.user.score || 0,
           plays: data.user.plays ?? 0,
-          pfp: data.user.pfp || pfp1,
+          pfp: pfpPath,
           }
         );
         
@@ -63,7 +86,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return unsubscribe;
-  }, [auth]);
+  }, []);
 
   const addPoints = (points: number) => {
     if (!user) return;

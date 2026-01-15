@@ -20,7 +20,7 @@ interface FetchedProfileData {
     pfp: string;
     rank: number;
 }
-
+const pfpFilenames = ["pfp1.png", "pfp2.png", "pfp3.png", "pfp4.png", "pfp5.png", "pfp6.png"];
 const pfps = [pfp1, pfp2, pfp3, pfp4, pfp5, pfp6];
 
 const ProfilePage = () => {
@@ -79,7 +79,7 @@ if (!curUser) {
         fetch(`http://localhost:8080/users/${curUser.uid}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pfp: img}),
+        body: JSON.stringify({ pfp: pfpFilenames[index] }),
         })
         .then(res => res.json())
         .then(data => console.log("pfp updated successfully:", data))
