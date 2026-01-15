@@ -22,13 +22,16 @@ const HomePage = () => {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        console.log("Profile page refresh!");
-        if(!user){
-            navigate("/");
-        }
-
+    console.log("Profile page refresh!");
+    if(!user){
+        navigate("/");
+    }
+    }, [user, navigate]);
+    
+    useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
+                setIsLoading(true);
                 // Fetch from the backend endpoint that returns ranked users
                 const response = await fetch("http://localhost:8080/users"); 
                 
@@ -46,16 +49,20 @@ const HomePage = () => {
                 setIsLoading(false);
             }
         };
+        if (user?.uid) {
+            fetchLeaderboard();
+        }
+    }, [user?.uid]);
+       
 
+    useEffect(() => {
         const fetchProfilePic = async() => {
-            if(user){
+            if(user?.pfp){
                 changePfp(user.pfp);
             }
         };
-
-        fetchLeaderboard();
         fetchProfilePic();
-    },[]);
+    },[user, changePfp]);
 
     const handleSignOutClick = async () => {
         await signOut();
@@ -99,7 +106,9 @@ const HomePage = () => {
             
             {!isLoading && !error && leaderboard.length > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <table style={{ borderCollapse: 'collapse', width: '60%', maxWidth: '600px', margin: '0px 0' }}>
+                    <table 
+                        style={{ borderCollapse: 'collapse', width: '60%', maxWidth: '600px', margin: '0px 0' }}
+                    >
                         <thead>
                             <tr style={{ borderBottom: '2px solid #333' }}>
                                 <th style={tableHeaderStyle}>Rank</th>

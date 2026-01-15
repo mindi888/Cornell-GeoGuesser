@@ -3,7 +3,6 @@ import { signIn, signOut } from "../auth/auth";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../UserContext";
 import { getAuth } from "firebase/auth";
-import pfp1 from "../assets/pfp/pfp1.png";
 
 const LoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,42 +22,6 @@ const LoginPage = () => {
       //Sign in
       const result = await signIn();
       if (!result) return;
-
-      const auth = getAuth();
-      const curUser = auth.currentUser;
-
-      if (curUser) {
-        console.log("went into curUser if statement");
-        const res = await fetch(`http://localhost:8080/users/${curUser.uid}`);
-        const data = await res.json();
-        setUser(data.user); // store in your UserContext
-        if(user){
-          console.log("userContext data set:"+user.email);
-          if(user.pfp==null){
-            console.log("entered no pfp if statement");
-            changePfp(pfp1);
-          }
-        }
-        else{
-          changePfp(pfp1);
-        }
-
-        //const { setUser } = useUser();
-        // if(user){
-        //   setUser({
-        //     uid: user.uid,
-        //     name: data.userData.name,
-        //     email: data.userData.email,
-        //     score: data.userData.score,
-        //     pfp: data.userData.pfp,
-        //   });
-
-        //   if(user.pfp==null){
-        //     //console.log("entered no pfp in statement");
-        //     changePfp(pfp1);
-        //   }
-        // }
-      }
 
       setIsLoggedIn(true);
       navigate("/home");
