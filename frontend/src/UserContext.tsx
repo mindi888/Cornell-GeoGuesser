@@ -49,7 +49,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         
         // Optionally fetch extra data from your backend
         try {
-          const res = await fetch(`http://localhost:8080/users/${firebaseUser.uid}`);
+          const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${firebaseUser.uid}`);
           const data = await res.json();
 
           const pfpFromDB = data.user.pfp;

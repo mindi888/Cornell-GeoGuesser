@@ -33,7 +33,7 @@ const HomePage = () => {
             try {
                 setIsLoading(true);
                 // Fetch from the backend endpoint that returns ranked users
-                const response = await fetch("http://localhost:8080/users"); 
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/users`);
                 
                 if (!response.ok) {
                     throw new Error("Failed to fetch leaderboard data.");

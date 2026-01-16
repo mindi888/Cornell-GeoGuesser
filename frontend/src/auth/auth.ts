@@ -31,7 +31,7 @@ export const signIn = async () => {
         const idToken = await user.getIdToken(); // Get the Firebase ID token
         
         // Define your backend endpoint URL
-        const backendUrl = 'http://localhost:8080/api/secure-login-action'; 
+        const backendUrl = `${import.meta.env.VITE_API_URL}/api/secure-login-action`;
 
         const backendResponse = await fetch(backendUrl, {
             method: 'POST',

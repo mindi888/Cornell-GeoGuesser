@@ -95,7 +95,7 @@ const ResultsPage = () => {
     const newScore = user.score + earned;
     const newPlays = user.plays + 1;
     if (curUser) {
-      fetch(`http://localhost:8080/users/${curUser.uid}`, {
+      fetch(`${import.meta.env.VITE_API_URL}/users/${curUser.uid}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ score: newScore, plays: newPlays}),

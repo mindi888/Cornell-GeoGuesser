@@ -42,7 +42,7 @@ const PlayPage = () => {
         const random = Math.floor(Math.random() * 48) + 1;
         setImageFileName(images[random]);
 
-        fetch(`http://localhost:8080/locations/img${random}.JPG`)
+        fetch(`${import.meta.env.VITE_API_URL}/locations/img${random}.JPG`)
             .then(res => res.json())
             .then(data => {
                 setCorrectLocation([data.latitude, data.longitude]);

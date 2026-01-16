@@ -46,7 +46,7 @@ if (!curUser) {
     const fetchProfileData = async () => {
         try {
             // Use the backend endpoint to get the user's data by UID
-            const response = await fetch(`http://localhost:8080/users/${curUser.uid}`);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${curUser.uid}`);
             
             if (!response.ok) {
                 throw new Error("Failed to fetch user profile data.");
@@ -76,7 +76,7 @@ if (!curUser) {
     changePfp(img);
 
     if (curUser && user) {
-        fetch(`http://localhost:8080/users/${curUser.uid}`, {
+        fetch(`${import.meta.env.VITE_API_URL}/users/${curUser.uid}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pfp: pfpFilenames[index] }),
