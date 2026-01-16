@@ -6,8 +6,18 @@ let serviceAccount;
 
 if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
   // Production: use full JSON from environment variable
-  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
   console.log("✅ Using FIREBASE_SERVICE_ACCOUNT_JSON");
+  try {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    console.log("Parsed service account:");
+    console.log("- project_id:", serviceAccount.project_id);
+    console.log("- client_email:", serviceAccount.client_email);
+    console.log("- private_key exists:", !!serviceAccount.private_key);
+    console.log("- private_key starts with:", serviceAccount.private_key?.substring(0, 30));
+  } catch (error) {
+    console.error("❌ Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON:", error);
+    throw error;
+  }
 } else {
   // Fallback to individual env vars (for backwards compatibility)
   console.log("⚠️ Falling back to individual env vars");
