@@ -33,6 +33,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 service_account.json
+service_accountOLD.json
 
 # turbo
 .turbo

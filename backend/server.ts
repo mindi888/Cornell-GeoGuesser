@@ -303,10 +303,7 @@ app.delete("/users/:id", async (req, res) => {
 // app.listen(port, hostname, () => {
 //     console.log("Listening");
 // });
-
 if (process.env.NODE_ENV !== "production") { 
-    app.listen(8080, () => { 
-        console.log("Local server running on http://localhost:8080"); 
-    }); 
+    app.listen(8080, () => { console.log("Local server running on http://localhost:8080"); }); 
 } 
 export default app;
