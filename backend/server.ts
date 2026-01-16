@@ -10,7 +10,18 @@ const app: Express = express();
 const hostname = "0.0.0.0";
 const port = 8080;
 
-app.use(cors());
+app.use(cors({ 
+    origin: [ 
+        "http://localhost:5173", 
+        "http://localhost:3000", 
+        "https://cornell-geoguesser.vercel.app" ], 
+    methods: [
+        "GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+    allowedHeaders: [
+        "Content-Type", "Authorization"], 
+    credentials: true
+}));
+
 app.use(express.json());
 
 
