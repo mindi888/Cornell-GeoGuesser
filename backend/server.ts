@@ -15,10 +15,8 @@ app.use(cors({
         "http://localhost:5173", 
         "http://localhost:3000", 
         "https://cornell-geoguesser.vercel.app" ], 
-    methods: [
-        "GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-    allowedHeaders: [
-        "Content-Type", "Authorization"], 
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+    allowedHeaders: ["Content-Type", "Authorization"], 
     credentials: true
 }));
 
@@ -248,7 +246,13 @@ app.delete("/users/:id", async (req, res) => {
     }
 });
 
-app.listen(port, hostname, () => {
-    console.log("Listening");
-});
+// app.listen(port, hostname, () => {
+//     console.log("Listening");
+// });
 
+if (process.env.NODE_ENV !== "production") { 
+    app.listen(8080, () => { 
+        console.log("Local server running on http://localhost:8080"); 
+    }); 
+} 
+export default app;
