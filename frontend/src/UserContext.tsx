@@ -46,7 +46,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         console.log("logged in");
-        
+        await new Promise(r => setTimeout(r, 300)); // wait 300ms for Firestore to finish writing
+
         // Optionally fetch extra data from your backend
         try {
           const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${firebaseUser.uid}`);
