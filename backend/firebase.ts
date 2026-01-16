@@ -7,8 +7,10 @@ let serviceAccount;
 if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
   // Production: use full JSON from environment variable
   serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+  console.log("✅ Using FIREBASE_SERVICE_ACCOUNT_JSON");
 } else {
   // Fallback to individual env vars (for backwards compatibility)
+  console.log("⚠️ Falling back to individual env vars");
   serviceAccount = {
     type: process.env.FIREBASE_TYPE,
     project_id: process.env.FIREBASE_PROJECT_ID,
