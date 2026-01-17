@@ -2,12 +2,31 @@ import { useState } from "react";
 import { signIn, signOut } from "../auth/auth";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../UserContext";
-import { getAuth } from "firebase/auth";
+import { useEffect } from "react";
+import { onAuthStateChanged, getAuth } from "firebase/auth";
 
 const LoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { user, setUser, changePfp } = useUser(); // User context
   const navigate = useNavigate();
+  const auth = getAuth();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const userData = {
+        uid: firebaseUser.uid,
+        name: firebaseUser.displayName || "Anonymous",
+        pfp: firebaseUser.photoURL || "/default-pfp.png",
+        score: 0, // Placeholder
+        plays: 0  // Placeholder
+      };
+        setUser(user); 
+        navigate("/home"); // Success! Redirects as soon as state is valid
+      }
+    });
+    return () => unsubscribe(); 
+  }, [auth, navigate, setUser]);
 
   const handleLoginClick = async () => {
     try {
