@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signIn, signOut } from "../auth/auth";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../UserContext";
@@ -9,20 +9,26 @@ const LoginPage = () => {
   const { user, setUser, changePfp } = useUser(); // User context
   const navigate = useNavigate();
 
-  const handleLoginClick = async () => {
-  try {
-    const result = await signIn();
-    if (result) {
-      // Small delay ensures the UserContext/onAuthStateChanged 
-      // listener processes the new user before you move pages.
-      setTimeout(() => {
-        navigate("/home");
-      }, 100); 
+  // WATCHER: As soon as UserContext finishes fetching data and sets 'user', 
+  // this will trigger and move you to the home page automatically.
+  useEffect(() => {
+    if (user) {
+      navigate("/home");
     }
-  } catch (err) {
-    console.error("Login failed:", err);
-  }
-};
+  }, [user, navigate]);
+
+  const handleLoginClick = async () => {
+    try {
+      if (user) {
+        await signOut();
+        return;
+      }
+      // Just trigger the sign-in. The useEffect above handles the redirect.
+      await signIn();
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
+  };
 
   return (
     <div

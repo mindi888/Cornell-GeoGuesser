@@ -53,7 +53,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
           const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${firebaseUser.uid}`);
           const data = await res.json();
 
-          const pfpFromDB = data.user.pfp;
+          if (!data || !data.user) {
+            console.error("Backend returned no user data");
+            setLoading(false);
+            return;
+          }
+
+          const pfpFromDB = data.user.pfp || "pfp1.png";
+
           let pfpPath = pfp1;
           
           if (pfpFromDB?.includes('pfp')) {
