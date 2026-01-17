@@ -22,10 +22,17 @@ const HomePage = () => {
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-    console.log("Profile page refresh!");
-    if(!user){
-        navigate("/");
-    }
+        document.body.style.backgroundColor = "rgba(226, 206, 171, 1)";
+        return () => {
+            document.body.style.backgroundColor = ""; // reset when leaving page
+        };
+    }, []);
+    
+    useEffect(() => {
+        console.log("Profile page refresh!");
+        if(!user){
+            navigate("/");
+        }
     }, [user]);
     
     useEffect(() => {
@@ -80,9 +87,10 @@ const HomePage = () => {
     return( 
       <div
         style={{
-            height: "100vh",
+            minHeight: "100vh",
             width: "100vw",
             backgroundColor: "rgba(226, 206, 171, 1)",
+            position: "relative", overflow: "visible",
         }}
         >
         {/*Leader Board*/}

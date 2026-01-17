@@ -26,7 +26,31 @@ const ResultsPage = () => {
 
   const auth = getAuth();
   const { user, addPoints, addPlays } = useUser();
-  const [pointsEarned, setPointsEarned] = useState(0);
+
+  const getScore = (dist: number) => {
+    if (timedOut || dist > 3000) {
+      return 0;
+    }
+    const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
+    for (let i = 1; i < scoreCutOffs.length; i++) {
+      if (dist > scoreCutOffs[i]) {
+        return Math.round(
+          (10 * (dist - scoreCutOffs[i])) / (scoreCutOffs[i] - scoreCutOffs[i - 1]) +
+            10 * i
+        );
+      }
+    }
+    return -10000;
+  };
+  
+  let earned = 0;
+  if (!timedOut && guess) {
+    earned = getScore(distMeters);
+  }
+
+  const [pointsEarned, setPointsEarned] = useState(earned);
+  const [totalScore, setTotalScore] = useState(user?.score || 0);
+  
 
   const customMarker = new L.Icon({
     iconUrl: Player_Marker,
@@ -44,71 +68,118 @@ const ResultsPage = () => {
     popupAnchor: [0, -40],
   });
 
-  const getScore = (dist: number) => {
-    if (timedOut || dist > 3000) {
-      return 0;
-    }
-    const scoreCutOffs = [3000, 2000, 1200, 700, 350, 200, 100, 50, 25, 10, 0];
-    for (let i = 1; i < scoreCutOffs.length; i++) {
-      if (dist > scoreCutOffs[i]) {
-        return Math.round(
-          (10 * (dist - scoreCutOffs[i])) / (scoreCutOffs[i] - scoreCutOffs[i - 1]) +
-            10 * i
-        );
-      }
-    }
-    return -10000;
-  };
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/");
-      return;
-    }
+useEffect(() => {
+  if (!user) {
+    navigate("/");
+    return;
+  }
 
-    // Unique key per user+round
-    const roundKey = `scored-${user.uid}-${JSON.stringify(correctLocation)}-${JSON.stringify(
-      guess
-    )}`;
-    const pointsKey = `${roundKey}-points`;
+  const roundKey = `scored-${user.uid}-${JSON.stringify(correctLocation)}-${JSON.stringify(guess)}`;
+  const pointsKey = `${roundKey}-points`;
 
-    // If already scored, restore pointsEarned
-    const storedPoints = localStorage.getItem(pointsKey);
-    if (storedPoints) {
-      setPointsEarned(parseInt(storedPoints, 10));
-      return;
-    }
+  const storedPoints = localStorage.getItem(pointsKey);
+  if (storedPoints) {
+    setPointsEarned(parseInt(storedPoints, 10));
+    return;
+  }
 
-    // Otherwise calculate and award
-    let earned = 0;
-    if (timedOut) {
-      earned = 0;
-    } else if (guess) {
-      earned = getScore(distMeters);
-    }
-
-    setPointsEarned(earned);
-    addPoints(earned);
-    addPlays()
+  const updateScore = async () => {
 
     const curUser = auth.currentUser;
-    const newScore = user.score + earned;
-    const newPlays = user.plays + 1;
-    if (curUser) {
-      fetch(`${import.meta.env.VITE_API_URL}/users/${curUser.uid}`, {
+    if (!curUser) return;
+
+    try {
+      // 1. Fetch latest user data from backend
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${curUser.uid}`);
+      const data = await res.json();
+      
+      const latestScore = data.user.score;
+      const latestPlays = data.user.plays;
+
+      // 2. Calculate new values
+      const newScore = latestScore + earned;
+      const newPlays = latestPlays + 1;
+
+      // 3. Update backend
+      await fetch(`${import.meta.env.VITE_API_URL}/users/${curUser.uid}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ score: newScore, plays: newPlays}),
-      })
-        .then((res) => res.json())
-        .then((data) => console.log("Score updated successfully:", data))
-        .catch((err) => console.error("Error updating score:", err));
-    }
+        body: JSON.stringify({ score: newScore, plays: newPlays }),
+      });
 
-    // Mark round as scored and persist earned points
-    localStorage.setItem(roundKey, "true");
-    localStorage.setItem(pointsKey, earned.toString());
-  }, [user, timedOut, guess, correctLocation, distMeters, navigate, addPoints, auth]);
+      // 4. Update local state only (don't fetch again)
+      addPoints(earned);
+      addPlays();
+      setPointsEarned(earned);
+      setTotalScore(newScore);
+
+      // 5. Mark round as scored
+      localStorage.setItem(roundKey, "true");
+      localStorage.setItem(pointsKey, earned.toString());
+
+    } catch (err) {
+      console.error("Error updating score:", err);
+    }
+  };
+
+  updateScore();
+
+}, [timedOut, guess, correctLocation, distMeters, navigate, user, auth, addPoints, addPlays]);
+
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate("/");
+  //     return;
+  //   }
+
+  //   // Unique key per user+round
+  //   const roundKey = `scored-${user.uid}-${JSON.stringify(correctLocation)}-${JSON.stringify(
+  //     guess
+  //   )}`;
+  //   const pointsKey = `${roundKey}-points`;
+
+  //   // If already scored, restore pointsEarned
+  //   const storedPoints = localStorage.getItem(pointsKey);
+  //   if (storedPoints) {
+  //     setPointsEarned(parseInt(storedPoints, 10));
+  //     return;
+  //   }
+    
+
+  //   // Otherwise calculate and award
+  //   let earned = 0;
+  //   if (timedOut) {
+  //     earned = 0;
+  //   } else if (guess) {
+  //     earned = getScore(distMeters);
+  //   }
+
+  //   const curUser = auth.currentUser;
+  //   const newScore = user.score + earned;
+  //   const newPlays = user.plays + 1;
+
+  //   setPointsEarned(earned);
+  //   addPoints(earned);
+  //   addPlays()
+
+  
+  //   if (curUser) {
+  //     console.log("ABOUT TO UPDATE:", { earned, userScoreBefore: user.score, newScore, newPlays, });
+  //     fetch(`${import.meta.env.VITE_API_URL}/users/${curUser.uid}`, {
+  //       method: "PUT",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ score: newScore, plays: newPlays}),
+  //     })
+  //       .then((res) => res.json())
+  //       .then((data) => console.log("Score updated successfully:", data))
+  //       .catch((err) => console.error("Error updating score:", err));
+  //   }
+
+  //   // Mark round as scored and persist earned points
+  //   localStorage.setItem(roundKey, "true");
+  //   localStorage.setItem(pointsKey, earned.toString());
+  // }, [timedOut, guess, correctLocation, distMeters, navigate, addPoints, auth]);
 
   const handlePlayClick = () => navigate("/play");
   const handleHomeClick = () => navigate("/home");
@@ -173,7 +244,7 @@ const ResultsPage = () => {
         {timedOut ? `Distance: N/A` : `Your distance from Beebe: ${distMeters.toFixed(2)} meters`}
       </p>
       <p style={{ marginBottom: "5px", marginTop: "0px" }}>Points Earned: {pointsEarned}</p>
-      <p style={{ marginBottom: "5px", marginTop: "0px" }}>Total Points: {user?.score}</p>
+      <p style={{ marginBottom: "5px", marginTop: "0px" }}>Total Points: {totalScore}</p>
 
       <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
         <button
