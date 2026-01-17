@@ -10,25 +10,19 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleLoginClick = async () => {
-    try {
-      if (isLoggedIn) {
-        // Sign out
-        await signOut();
-        setIsLoggedIn(false);
-        setUser(null);
-        return;
-      }
-
-      //Sign in
-      const result = await signIn();
-      if (!result) return;
-
-      setIsLoggedIn(true);
-      navigate("/home");
-    } catch (err) {
-      console.error("Login failed:", err);
+  try {
+    const result = await signIn();
+    if (result) {
+      // Small delay ensures the UserContext/onAuthStateChanged 
+      // listener processes the new user before you move pages.
+      setTimeout(() => {
+        navigate("/home");
+      }, 100); 
     }
-  };
+  } catch (err) {
+    console.error("Login failed:", err);
+  }
+};
 
   return (
     <div
