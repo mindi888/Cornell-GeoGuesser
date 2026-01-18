@@ -11,11 +11,7 @@ const LoginPage = () => {
 
   // WATCHER: As soon as UserContext finishes fetching data and sets 'user', 
   // this will trigger and move you to the home page automatically.
-  useEffect(() => {
-    if (user) {
-      navigate("/home");
-    }
-  }, [user, navigate]);
+  
 
   const handleLoginClick = async () => {
     try {
@@ -24,11 +20,27 @@ const LoginPage = () => {
         return;
       }
       // Just trigger the sign-in. The useEffect above handles the redirect.
-      await signIn();
+      //await signIn();
+      const result = await signIn();
+      
+      // Force navigation immediately after successful sign-in
+      if (result && result.user) {
+        console.log("Sign-in successful, navigating to /home");
+        setIsLoggedIn(true);
+        navigate("/home");
+      }
+
     } catch (err) {
       console.error("Login failed:", err);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      setIsLoggedIn(true);
+      navigate("/home");
+    }
+  }, [user, navigate]);
 
   return (
     <div
