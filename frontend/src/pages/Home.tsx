@@ -28,12 +28,12 @@ const HomePage = () => {
         };
     }, []);
     
-    useEffect(() => {
-        console.log("Profile page refresh!");
-        if(!user){
-            navigate("/");
-        }
-    }, [user]);
+    // useEffect(() => {
+    //     console.log("Profile page refresh!");
+    //     if(!user){
+    //         navigate("/");
+    //     }
+    // }, [user]);
     
     useEffect(() => {
         const fetchLeaderboard = async () => {
