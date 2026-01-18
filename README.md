@@ -2,6 +2,8 @@
 
 We created a geoguessr game that has users guess where in Cornell University the generated images are on a map. We implemented this with React, Typescript, Express, Firebase and Leaflet.js, which is an open-source JavaScript library for mobile-friendly interactive maps. 
 
+Click here to play! 👉 https://cornell-geoguesser.vercel.app/ 
+
 ## Webpages
 
 1. Login page
